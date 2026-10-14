@@ -1,0 +1,16 @@
+{
+  "name": "Cyberstart: cyberbezpieczeństwo od zera",
+  "short_name": "Cyberstart",
+  "description": "Minigry po polsku do nauki cyberbezpieczeństwa od zera.",
+  "lang": "pl",
+  "start_url": "./#/",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0d1114",
+  "theme_color": "#0b7a57",
+  "icons": [
+    { "src": "img/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "img/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" },
+    { "src": "img/icon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ]
+}

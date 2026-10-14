@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Cyberstart: cyberbezpieczeństwo od zera w minigrach</title>
+    <meta name="description" content="34 minigry po polsku, które uczą cyberbezpieczeństwa od zera: terminal Linuksa i mini CTF, sieci, hasła, phishing, firewall, analiza logów i egzamin z dyplomem." />
+    <meta name="theme-color" content="#f5f6f3" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0d1114" media="(prefers-color-scheme: dark)" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="pl_PL" />
+    <meta property="og:site_name" content="Cyberstart" />
+    <meta property="og:title" content="Cyberstart: cyberbezpieczeństwo od zera w minigrach" />
+    <meta property="og:description" content="34 minigry po polsku: terminal Linuksa i mini CTF, sieci, hasła, phishing, firewall, analiza logów i egzamin z dyplomem. Bez instalacji, od zera." />
+    <meta property="og:image" content="img/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Cyberstart, minigry o cyberbezpieczeństwie po polsku" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="img/icon-192.png" />
+    <link rel="icon" href="favicon.ico" sizes="any" />
+    <link rel="icon" href="img/icon.svg" type="image/svg+xml" />
+    <link rel="preload" href="fonts/dm-sans-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="fonts/dm-sans-latin-ext-wght-normal.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="stylesheet" href="css/tokens.css" />
+    <link rel="stylesheet" href="css/main.css" />
+    <link rel="stylesheet" href="css/games.css" />
+    <script>
+      try {
+        const saved = JSON.parse(localStorage.getItem('cyberstart:v1') || 'null');
+        if (saved && saved.theme) document.documentElement.dataset.theme = saved.theme;
+      } catch (error) {}
+    </script>
+    <script type="module" src="js/app.js"></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Przejdź do treści</a>
+    <header class="topbar">
+      <div class="container topbar-inner">
+        <a class="brand" href="#/" aria-label="Cyberstart, strona główna">
+          <span class="brand-mark" aria-hidden="true">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" /><path d="m9 12 2 2 4-4" /></svg>
+          </span>
+          <span translate="no">Cyberstart</span>
+        </a>
+        <span class="topbar-spacer"></span>
+        <span class="xp-chip" id="xp-chip" role="status"></span>
+        <button class="btn btn-ghost btn-icon" id="theme-toggle" type="button" aria-label="Zmień motyw"></button>
+      </div>
+    </header>
+
+    <main id="main" tabindex="-1">
+      <div class="loading">
+        <span class="spinner" aria-hidden="true"></span>
+        <p>Ładowanie gier…</p>
+      </div>
+      <noscript>
+        <div class="container empty">
+          <p>Minigry działają w przeglądarce i potrzebują włączonego JavaScriptu.</p>
+        </div>
+      </noscript>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <div class="notice">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3" /><path d="M12 9v4" /><path d="M12 17h.01" /></svg>
+          <p>Wiedzę o atakach wykorzystuj tylko do obrony: na własnym sprzęcie, w laboratorium albo za pisemną zgodą właściciela systemu. Wejście do cudzego systemu bez zgody jest w Polsce przestępstwem.</p>
+        </div>
+        <nav class="footer-links" aria-label="Informacje">
+          <a href="polityka-prywatnosci.html">Polityka prywatności</a>
+          <a href="regulamin.html">Regulamin</a>
+          <button type="button" id="export-progress">Eksportuj postęp</button>
+          <button type="button" id="import-progress">Importuj postęp</button>
+          <input type="file" id="import-file" accept="application/json,.json" hidden />
+          <button type="button" id="reset-progress">Wyzeruj postęp</button>
+        </nav>
+      </div>
+    </footer>
+  </body>
+</html>

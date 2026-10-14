@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Polityka prywatności | Cyberstart</title>
+    <meta name="description" content="Jak Cyberstart przetwarza dane: postęp gier zapisuje się tylko w przeglądarce, bez kont, ciasteczek śledzących i analityki." />
+    <meta name="theme-color" content="#f5f6f3" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0d1114" media="(prefers-color-scheme: dark)" />
+    <meta property="og:title" content="Polityka prywatności | Cyberstart" />
+    <meta property="og:description" content="Jak Cyberstart przetwarza dane: postęp gier zapisuje się tylko w przeglądarce, bez kont, ciasteczek śledzących i analityki." />
+    <meta property="og:image" content="img/og.png" />
+    <link rel="icon" href="favicon.ico" sizes="any" />
+    <link rel="icon" href="img/icon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="css/tokens.css" />
+    <link rel="stylesheet" href="css/main.css" />
+    <script>
+      try {
+        const saved = JSON.parse(localStorage.getItem('cyberstart:v1') || 'null');
+        if (saved && saved.theme) document.documentElement.dataset.theme = saved.theme;
+      } catch (error) {}
+    </script>
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="container topbar-inner">
+        <a class="brand" href="./#/" aria-label="Cyberstart, strona główna">
+          <span class="brand-mark" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" /><path d="m9 12 2 2 4-4" /></svg></span>
+          <span translate="no">Cyberstart</span>
+        </a>
+      </div>
+    </header>
+    <main id="main" class="container game-view">
+      <div><a class="btn btn-ghost" href="./#/"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 19-7-7 7-7" /><path d="M19 12H5" /></svg><span>Wróć do mapy</span></a></div>
+      <article class="prose">
+        <h1 class="t-h2">Polityka prywatności</h1>
+        <p class="t-muted">Wersja z dnia [[data publikacji]]</p>
+        <h2 class="t-h4">1. Administrator</h2>
+        <p>Administratorem serwisu Cyberstart jest [[imię i nazwisko lub nazwa firmy]], [[adres]], NIP [[NIP]], e-mail: [[adres e-mail]] („Administrator”).</p>
+        <h2 class="t-h4">2. Jakie dane przetwarzamy</h2>
+        <p>Serwis nie wymaga zakładania konta i nie zbiera danych osobowych przez formularze. Wyniki gier, ranga i wybrany motyw kolorystyczny zapisują się wyłącznie w pamięci Twojej przeglądarki (localStorage) i nie są przesyłane do Administratora ani nikomu innemu.</p>
+        <p>Tekst wpisywany w grach (np. testowe hasło, polecenia w symulatorze terminala) jest analizowany tylko lokalnie w przeglądarce i nigdzie nie jest wysyłany ani zapisywany.</p>
+        <h2 class="t-h4">3. Logi serwera</h2>
+        <p>Serwer hostingowy [[nazwa dostawcy hostingu]] może automatycznie zapisywać techniczne logi (adres IP, data, adres żądanej strony, typ przeglądarki) w celu zapewnienia bezpieczeństwa i działania serwisu. Podstawą jest prawnie uzasadniony interes Administratora (art. 6 ust. 1 lit. f RODO). Logi są przechowywane przez [[okres przechowywania]].</p>
+        <h2 class="t-h4">4. Ciasteczka i analityka</h2>
+        <p>Serwis nie używa ciasteczek śledzących ani narzędzi analitycznych. Jeśli to się zmieni, pojawi się baner zgody, a ta polityka zostanie zaktualizowana.</p>
+        <h2 class="t-h4">5. Twoje prawa</h2>
+        <p>Masz prawo dostępu do danych, ich sprostowania, usunięcia, ograniczenia przetwarzania, sprzeciwu oraz skargi do Prezesa Urzędu Ochrony Danych Osobowych (ul. Stawki 2, 00-193 Warszawa). Dane zapisane w przeglądarce usuniesz sam, klikając „Wyzeruj postęp” w stopce albo czyszcząc dane strony w ustawieniach przeglądarki.</p>
+        <h2 class="t-h4">6. Kontakt</h2>
+        <p>W sprawach prywatności napisz na [[adres e-mail]].</p>
+      </article>
+    </main>
+  </body>
+</html>
