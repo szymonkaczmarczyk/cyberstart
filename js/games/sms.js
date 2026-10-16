@@ -121,7 +121,7 @@ export default {
       }
       ctx.progress(index, messages.length);
       const message = messages[index];
-      const status = h('div', { 'aria-live': 'polite' });
+      const status = h('div', { class: 'status-stack status-stack-loose', 'aria-live': 'polite' });
       let decided = false;
 
       const decide = (saysScam) => {
@@ -169,7 +169,7 @@ export default {
           h(
             'div',
             { class: 'phone' },
-            h('div', { class: 'phone-head' }, h('span', { class: 'phone-avatar' }, icon(message.channel === 'SMS' ? 'mail' : 'users')), h('div', {}, h('strong', { text: message.from }), h('span', { class: 't-small t-muted', text: message.channel }))),
+            h('div', { class: 'phone-head' }, h('span', { class: 'phone-avatar' }, icon(message.channel === 'SMS' ? 'mail' : 'users')), h('div', { class: 'phone-who' }, h('strong', { text: message.from }), h('span', { class: 't-small t-muted', text: message.channel }))),
             h('div', { class: 'phone-body' }, bubble)
           ),
           h('div', { class: 'btn-row' }, scamBtn, safeBtn),

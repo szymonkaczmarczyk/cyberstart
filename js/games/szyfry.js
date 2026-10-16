@@ -156,7 +156,7 @@ function playCaesar(stage) {
     const output = h('p', { class: 'cipher-text mono', 'aria-live': 'polite', text: cipher });
     const shiftLabel = h('output', { class: 'mono', for: 'caesar-shift', text: '0' });
     const slider = h('input', { type: 'range', id: 'caesar-shift', class: 'range', min: '0', max: '25', value: '0', step: '1' });
-    const status = h('div');
+    const status = h('div', { class: 'status-stack' });
     slider.addEventListener('input', () => {
       const shift = Number(slider.value);
       shiftLabel.textContent = String(shift);
@@ -198,7 +198,7 @@ function playCaesar(stage) {
 function playBase64(stage, ctx) {
   return new Promise((resolve) => {
     const decoded = h('code', { class: 'mono', text: BASE64_SECRET });
-    const status = h('div');
+    const status = h('div', { class: 'status-stack' });
     const decodeBtn = button({
       label: 'Odkoduj Base64',
       iconName: 'eye',

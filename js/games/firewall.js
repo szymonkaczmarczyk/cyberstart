@@ -83,7 +83,7 @@ export default {
       if (index >= packets.length) return finish();
       ctx.progress(index, packets.length);
       const packet = packets[index];
-      const status = h('div');
+      const status = h('div', { class: 'status-stack' });
       let decided = false;
 
       const decide = (allow) => {

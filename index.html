@@ -4,14 +4,14 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>Cyberstart: cyberbezpieczeństwo od zera w minigrach</title>
-    <meta name="description" content="34 minigry po polsku, które uczą cyberbezpieczeństwa od zera: terminal Linuksa i mini CTF, sieci, hasła, phishing, firewall, analiza logów i egzamin z dyplomem." />
+    <meta name="description" content="34 minigry po polsku, które uczą cyberbezpieczeństwa od zera: terminal Linuksa i mini CTF, sieci, hasła, phishing, firewall, analiza logów, śledztwa SOC i egzamin końcowy." />
     <meta name="theme-color" content="#f5f6f3" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#0d1114" media="(prefers-color-scheme: dark)" />
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="pl_PL" />
     <meta property="og:site_name" content="Cyberstart" />
     <meta property="og:title" content="Cyberstart: cyberbezpieczeństwo od zera w minigrach" />
-    <meta property="og:description" content="34 minigry po polsku: terminal Linuksa i mini CTF, sieci, hasła, phishing, firewall, analiza logów i egzamin z dyplomem. Bez instalacji, od zera." />
+    <meta property="og:description" content="34 minigry po polsku: terminal Linuksa i mini CTF, sieci, hasła, phishing, firewall, analiza logów, śledztwa SOC i egzamin końcowy. Bez instalacji, od zera." />
     <meta property="og:image" content="img/og.png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
@@ -33,6 +33,14 @@
       } catch (error) {}
     </script>
     <script type="module" src="js/app.js"></script>
+    <script>
+      if (location.protocol === 'file:') {
+        document.addEventListener('DOMContentLoaded', () => {
+          document.querySelector('#main .loading')?.remove();
+          document.getElementById('file-warning').hidden = false;
+        });
+      }
+    </script>
   </head>
   <body>
     <a class="skip-link" href="#main">Przejdź do treści</a>
@@ -60,6 +68,19 @@
           <p>Minigry działają w przeglądarce i potrzebują włączonego JavaScriptu.</p>
         </div>
       </noscript>
+      <section class="container game-view file-warning" id="file-warning" hidden>
+        <div class="empty">
+          <span class="tag">Uruchomienie</span>
+          <h1 class="t-h3">Ta aplikacja potrzebuje lokalnego serwera</h1>
+          <p>Plik <code>index.html</code> został otwarty bezpośrednio z dysku. Przeglądarki blokują wtedy moduły JavaScript, dlatego gry się nie wczytują. Uruchom serwer jednym poleceniem:</p>
+          <ol class="file-steps">
+            <li>Otwórz Terminal w katalogu projektu (na Macu: kliknij folder prawym przyciskiem i wybierz „Nowy terminal w folderze”).</li>
+            <li>Wpisz <code>npm start</code> i naciśnij Enter. Potrzebny jest Node.js w wersji 18 lub nowszej.</li>
+            <li>Otwórz w przeglądarce adres <code>http://localhost:4180</code>.</li>
+          </ol>
+          <p class="t-small t-muted">Bez Node.js zadziała też <code>python3 -m http.server 4180</code> uruchomione w tym samym katalogu.</p>
+        </div>
+      </section>
     </main>
 
     <footer class="site-footer">

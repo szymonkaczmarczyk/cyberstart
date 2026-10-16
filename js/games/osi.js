@@ -59,7 +59,7 @@ export default {
     let selected = null;
     let placed = 0;
     const firstTry = new Set(items.map((item) => item.label));
-    const status = h('div', { 'aria-live': 'polite' });
+    const status = h('div', { class: 'status-stack', 'aria-live': 'polite' });
     const pool = h('div', { class: 'osi-pool', role: 'group', 'aria-label': 'Elementy do przypisania' });
     const itemButtons = new Map();
     const slots = new Map();

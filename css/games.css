@@ -346,7 +346,15 @@
 
 .match-purpose {
   flex-direction: column;
+  justify-content: center;
   align-items: flex-start;
+}
+
+@media (min-width: 640px) {
+  .match-col {
+    grid-auto-rows: 1fr;
+    align-content: stretch;
+  }
 }
 
 .match-item.is-matched {
@@ -356,8 +364,12 @@
 }
 
 .match-label {
-  color: var(--success);
+  color: var(--text-muted);
   font-size: var(--fs-xs);
+}
+
+.is-matched .match-label {
+  color: var(--success);
 }
 
 .osi-pool {
@@ -1118,7 +1130,7 @@
 
 .flag-list {
   display: grid;
-  gap: var(--s-2);
+  gap: var(--s-3);
   margin: 0;
   padding-left: 1.4em;
   max-width: 70ch;
@@ -1132,6 +1144,71 @@
 
 .flag-list.is-safe li::marker {
   color: var(--success);
+}
+
+.phone {
+  max-width: 560px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  background: var(--bg);
+  overflow: hidden;
+  animation: rise var(--dur-slow) var(--ease);
+}
+
+.phone-head {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  padding: var(--s-3) var(--s-4);
+  border-bottom: 1px solid var(--border);
+  background: var(--surface-2);
+}
+
+.phone-avatar {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--surface-3);
+  color: var(--text-muted);
+}
+
+.phone-who {
+  display: grid;
+  min-width: 0;
+  line-height: 1.3;
+}
+
+.phone-who strong {
+  overflow-wrap: anywhere;
+}
+
+.phone-body {
+  padding: var(--s-5) var(--s-4);
+}
+
+.sms-bubble {
+  max-width: 44ch;
+  margin: 0;
+  padding: var(--s-3) var(--s-4);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg) var(--r-lg) var(--r-lg) var(--r-sm);
+  background: var(--surface);
+  line-height: var(--lh-body);
+  overflow-wrap: anywhere;
+  transition: border-color var(--dur) var(--ease), background-color var(--dur) var(--ease);
+}
+
+.sms-bubble.is-scam {
+  border-color: var(--danger);
+  background: var(--danger-soft);
+}
+
+.sms-bubble.is-safe {
+  border-color: var(--success);
+  background: var(--success-soft);
 }
 
 .url-bar {
@@ -1863,186 +1940,4 @@
 
 .config-preview {
   display: grid;
-}
-
-.diploma {
-  display: grid;
-  gap: var(--s-3);
-  justify-items: center;
-  margin-block: var(--s-5);
-  padding: var(--s-7) var(--s-5);
-  border: 2px solid var(--accent);
-  outline: 1px solid var(--accent);
-  outline-offset: 6px;
-  border-radius: var(--r-md);
-  background: var(--surface);
-  text-align: center;
-}
-
-.diploma-brand {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--s-2);
-  font-weight: 700;
-  letter-spacing: -0.04em;
-  font-size: 20px;
-}
-
-.diploma-brand .brand-mark .icon {
-  width: 18px;
-  height: 18px;
-}
-
-.diploma-kicker {
-  color: var(--accent);
-}
-
-.diploma-title {
-  font-size: var(--fs-h3);
-}
-
-.diploma-text {
-  max-width: 52ch;
-  color: var(--text-muted);
-  line-height: 1.6;
-}
-
-.diploma-name {
-  font-size: clamp(28px, 5vw, 44px);
-  font-weight: 700;
-  letter-spacing: -0.04em;
-  line-height: 1.1;
-  padding-bottom: var(--s-2);
-  border-bottom: 1px solid var(--border-strong);
-  overflow-wrap: anywhere;
-}
-
-.diploma-foot {
-  display: flex;
-  gap: var(--s-6);
-  justify-content: center;
-  font-family: var(--font-mono);
-  font-size: var(--fs-small);
-  letter-spacing: 0;
-}
-
-.diploma-note {
-  font-size: var(--fs-xs);
-  color: var(--text-muted);
-}
-
-@media print {
-  @page {
-    size: A4 landscape;
-    margin: 12mm;
-  }
-
-  body {
-    background: #fff;
-  }
-
-  body * {
-    visibility: hidden;
-  }
-
-  .diploma,
-  .diploma * {
-    visibility: visible;
-  }
-
-  .diploma {
-    position: absolute;
-    inset: 0;
-    margin: 0;
-    color: #15191c;
-    background: #fff;
-    border-color: #0b7a57;
-    outline-color: #0b7a57;
-    align-content: center;
-  }
-
-  .diploma-text,
-  .diploma-note {
-    color: #565e64;
-  }
-}
-
-.tag-danger {
-  background: var(--danger-soft);
-  color: var(--danger);
-}
-
-.cve {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--s-2);
-}
-
-.cve .t-small {
-  flex-basis: 100%;
-}
-
-.phone {
-  width: 100%;
-  max-width: 420px;
-  border: 1px solid var(--border-strong);
-  border-radius: 28px;
-  background: var(--surface-2);
-  overflow: hidden;
-  box-shadow: var(--shadow);
-}
-
-.phone-head {
-  display: flex;
-  align-items: center;
-  gap: var(--s-3);
-  padding: var(--s-3) var(--s-4);
-  background: var(--surface);
-  border-bottom: 1px solid var(--border);
-}
-
-.phone-head > div {
-  display: grid;
-  line-height: 1.3;
-}
-
-.phone-avatar {
-  display: grid;
-  place-items: center;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: var(--accent-soft);
-  color: var(--accent-text);
-}
-
-.phone-body {
-  display: grid;
-  min-height: 160px;
-  align-content: end;
-  padding: var(--s-5) var(--s-4);
-}
-
-.sms-bubble {
-  justify-self: start;
-  max-width: 88%;
-  padding: var(--s-3) var(--s-4);
-  border-radius: 18px 18px 18px 4px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  line-height: 1.5;
-  overflow-wrap: anywhere;
-  animation: rise var(--dur-slow) var(--ease);
-  transition: border-color var(--dur) var(--ease), background-color var(--dur) var(--ease);
-}
-
-.sms-bubble.is-scam {
-  border-color: var(--danger);
-  background: var(--danger-soft);
-}
-
-.sms-bubble.is-safe {
-  border-color: var(--success);
-  background: var(--success-soft);
 }

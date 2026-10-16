@@ -288,7 +288,7 @@ export default {
       ctx.progress(index, emails.length);
       renderInbox();
       const mail = emails[index];
-      const status = h('div');
+      const status = h('div', { class: 'status-stack status-stack-loose' });
       let decided = false;
 
       const fromEl = h('span', { class: 'mono mail-address', text: `<${mail.fromAddress}>` });

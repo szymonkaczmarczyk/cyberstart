@@ -165,3 +165,17 @@ test('wszystkie trasy i strony statyczne bez błędów w konsoli', async ({ page
   }
   expect(errors).toEqual([]);
 });
+
+test('otwarcie pliku z dysku pokazuje instrukcję uruchomienia', async ({ page }) => {
+  const url = new URL('../../index.html', import.meta.url).href;
+  await page.goto(url);
+  await expect(page.locator('#file-warning')).toBeVisible();
+  await expect(page.locator('#file-warning')).toContainText('npm start');
+  await expect(page.locator('#main .loading')).toHaveCount(0);
+});
+
+test('przez serwer instrukcja uruchomienia się nie pokazuje', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.locator('.hero')).toBeVisible();
+  await expect(page.locator('#file-warning')).toBeHidden();
+});

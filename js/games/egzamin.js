@@ -1,6 +1,5 @@
-import { h, button, feedback, runQuiz, shuffle, clear, plural } from '../ui.js';
+import { h, button, feedback, runQuiz, shuffle, plural } from '../ui.js';
 import { icon } from '../icons.js';
-import { todayKey } from '../progress.js';
 import { examPool as hasla } from './hasla.js';
 import { examPool as szyfry } from './szyfry.js';
 import { examPool as kali } from './kali.js';
@@ -121,33 +120,17 @@ function buildExam() {
   return shuffle([...picked, ...rest].slice(0, EXAM_SIZE));
 }
 
-function diploma(name, percent) {
-  const date = new Date().toLocaleDateString('pl-PL', { day: 'numeric', month: 'long', year: 'numeric' });
-  return h(
-    'section',
-    { class: 'diploma', 'aria-label': 'Dyplom' },
-    h('div', { class: 'diploma-brand' }, h('span', { class: 'brand-mark' }, icon('shieldCheck')), h('span', { translate: 'no', text: 'Cyberstart' })),
-    h('p', { class: 't-caps diploma-kicker', text: 'Dyplom ukończenia' }),
-    h('h2', { class: 'diploma-title', text: 'Cyberbezpieczeństwo od zera' }),
-    h('p', { class: 'diploma-text', text: 'Niniejszym potwierdzamy, że' }),
-    h('p', { class: 'diploma-name', text: name }),
-    h('p', { class: 'diploma-text', text: `zalicza egzamin końcowy z wynikiem ${percent}%, obejmujący Linuksa i Kali, sieci, kryptografię, socjotechnikę oraz obronę systemów.` }),
-    h('div', { class: 'diploma-foot' }, h('span', { text: date }), h('span', { text: `Nr ${todayKey().replaceAll('-', '')}-${percent}` })),
-    h('p', { class: 'diploma-note', text: 'Dokument pamiątkowy wygenerowany lokalnie w przeglądarce.' })
-  );
-}
-
 export default {
   id: 'egzamin',
   title: 'Egzamin końcowy',
   category: 'wiedza',
   icon: 'trophy',
   minutes: 20,
-  summary: `${EXAM_SIZE} losowych pytań z całego kursu: od terminala po reakcję na incydent. Wynik od 80% daje dyplom do wydruku lub zapisania jako PDF.`,
+  summary: `${EXAM_SIZE} losowych pytań z całego kursu, od terminala po reakcję na incydent. Pokazuje, co już umiesz i do których gier warto wrócić.`,
   lesson: [
     'Egzamin losuje pytania ze wszystkich działów, więc każda próba jest trochę inna. Najlepiej podejść do niego po przejściu większości gier.',
-    `Próg zaliczenia to ${Math.round(PASS_RATIO * 100)}%. Po egzaminie zobaczysz, z których tematów warto zrobić powtórkę.`,
-    'Dyplom możesz wydrukować albo zapisać jako PDF w oknie drukowania przeglądarki. Imię wpisujesz samodzielnie i nie jest nigdzie wysyłane.'
+    'Pytania wymieszane z różnych tematów to jedna z najskuteczniejszych form utrwalania wiedzy: mózg musi najpierw rozpoznać, o czym jest pytanie.',
+    `Próg zaliczenia to ${Math.round(PASS_RATIO * 100)}%. Po egzaminie zobaczysz listę tematów do powtórki z linkami do gier.`
   ],
   takeaways: [
     'Wracaj do tematów, w których pojawiły się błędy. Fiszki pomogą utrwalić pojęcia.',
@@ -179,53 +162,14 @@ export default {
     });
     const percent = Math.round((100 * score) / questions.length);
     const passed = score / questions.length >= PASS_RATIO;
-    const summary = h('section', { class: 'panel' });
-    stage.append(summary);
-
+    const missing = Math.ceil(PASS_RATIO * questions.length) - score;
+    const verdict = passed
+      ? feedback('ok', `Zaliczone, wynik ${percent}%`, mistakes.size ? 'Świetnie. Przejrzyj jeszcze tematy, w których pojawiły się błędy.' : 'Bez ani jednego błędu. Gratulacje.')
+      : feedback('warn', `Wynik ${percent}%. Do zaliczenia brakuje: ${missing} ${plural(missing, 'poprawna odpowiedź', 'poprawne odpowiedzi', 'poprawnych odpowiedzi')}`, 'Powtórz tematy z listy i spróbuj ponownie. Pytania będą inne.');
     const review = mistakes.size
       ? h('div', { class: 'stage' }, h('h3', { class: 't-h4', text: 'Do powtórki' }), h('ul', { class: 'review-list' }, [...mistakes].map(([id, title]) => h('li', {}, h('a', { href: `#/gra/${id}` }, icon('rotate'), h('span', { text: title }))))))
       : null;
-    const finishButton = button({ label: 'Zobacz podsumowanie', variant: passed ? 'secondary' : 'primary', iconAfter: 'arrowRight', onclick: () => ctx.finish({ score, max: questions.length }) });
-
-    const missing = Math.ceil(PASS_RATIO * questions.length) - score;
-    if (!passed) {
-      clear(summary).append(
-        ...[
-          feedback('warn', `Wynik ${percent}%. Do zaliczenia brakuje: ${missing} ${plural(missing, 'poprawna odpowiedź', 'poprawne odpowiedzi', 'poprawnych odpowiedzi')}`, 'Powtórz tematy z listy i spróbuj ponownie. Pytania będą inne.'),
-          review,
-          h('div', { class: 'btn-row' }, finishButton)
-        ].filter(Boolean)
-      );
-      return;
-    }
-
-    const nameInput = h('input', { class: 'input', id: 'diploma-name', name: 'name', type: 'text', autocomplete: 'name', maxlength: '60', placeholder: 'np. Anna Kowalska' });
-    const nameError = h('p', { class: 'field-error', role: 'alert', hidden: true }, icon('alert'), ' Wpisz imię i nazwisko, które ma się pojawić na dyplomie.');
-    const diplomaBox = h('div');
-    const show = button({
-      label: 'Pokaż dyplom',
-      variant: 'primary',
-      iconName: 'trophy',
-      onclick: () => {
-        const name = nameInput.value.trim();
-        nameError.hidden = Boolean(name);
-        nameInput.setAttribute('aria-invalid', String(!name));
-        if (!name) {
-          nameInput.focus();
-          return;
-        }
-        diplomaBox.replaceChildren(diploma(name, percent), h('div', { class: 'btn-row' }, button({ label: 'Drukuj lub zapisz jako PDF', variant: 'primary', iconName: 'file', onclick: () => window.print() }), finishButton));
-        diplomaBox.scrollIntoView({ block: 'start' });
-      }
-    });
-    clear(summary).append(
-      ...[
-        feedback('ok', `Zaliczone! Wynik ${percent}%`, 'Gratulacje. Wpisz imię i nazwisko, żeby wygenerować dyplom.'),
-        review,
-        h('div', { class: 'field' }, h('label', { for: 'diploma-name', text: 'Imię i nazwisko na dyplomie' }), nameInput, nameError),
-        h('div', { class: 'btn-row' }, show, finishButton),
-        diplomaBox
-      ].filter(Boolean)
-    );
+    const finishButton = button({ label: 'Zobacz podsumowanie', variant: 'primary', iconAfter: 'arrowRight', onclick: () => ctx.finish({ score, max: questions.length }) });
+    stage.append(h('section', { class: 'panel' }, ...[verdict, review, h('div', { class: 'btn-row' }, finishButton)].filter(Boolean)));
   }
 };

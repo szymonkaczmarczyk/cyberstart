@@ -109,7 +109,7 @@ export default {
   ],
   mount(stage, ctx) {
     const values = Object.fromEntries(CHOICES.map((choice) => [choice.id, choice.options[0].value]));
-    const results = h('div', { 'aria-live': 'polite' });
+    const results = h('div', { class: 'status-stack', 'aria-live': 'polite' });
     let runs = 0;
     const max = DISASTERS.length * 2;
     const simulateButton = button({ label: 'Uruchom symulację awarii', variant: 'secondary', iconName: 'play', 'data-autoplay': '', onclick: simulate });

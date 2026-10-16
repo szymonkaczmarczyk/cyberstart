@@ -156,6 +156,14 @@ async function autoplay({ id, permissions, terminal, ctfFlags, stopAfter = Infin
       audit.click();
       return true;
     }
+    const auditBlocked = audit && !withText('.stage .btn', /^(Zakończ mimo to|Zakończ konfigurację)/);
+    if (auditBlocked && !flags.has('audit-best')) {
+      flags.add('audit-best');
+      const { AUDIT_SETTINGS } = await import(`/js/games/${id}.js`);
+      AUDIT_SETTINGS.forEach((setting) => document.getElementById(`opt-${setting.id}-${setting.best}`).click());
+      audit.click();
+      return true;
+    }
     const reveal = withText('.stage .btn', /Pokaż rozwiązanie/);
     if (reveal) {
       reveal.click();

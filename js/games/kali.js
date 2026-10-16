@@ -115,7 +115,7 @@ function playMatching(stage, ctx, total, tools) {
     let mistakes = 0;
     let matched = 0;
     const toolButtons = new Map();
-    const status = h('div', { 'aria-live': 'polite' });
+    const status = h('div', { class: 'status-stack', 'aria-live': 'polite' });
     const toolsCol = h('div', { class: 'match-col match-tools', role: 'group', 'aria-label': 'Narzędzia' });
     const purposeCol = h('div', { class: 'match-col', role: 'group', 'aria-label': 'Zastosowania' });
 
@@ -126,7 +126,9 @@ function playMatching(stage, ctx, total, tools) {
     }
 
     for (const tool of shuffle(tools)) {
-      const btn = h('button', { type: 'button', class: 'match-item match-purpose', onclick: () => attempt(tool, btn) }, h('span', { text: tool.purpose }));
+      const label = h('strong', { class: 'mono match-label', 'aria-hidden': 'true', text: '?' });
+      const btn = h('button', { type: 'button', class: 'match-item match-purpose', onclick: () => attempt(tool, btn) }, label, h('span', { text: tool.purpose }));
+      btn.matchLabel = label;
       purposeCol.append(btn);
     }
 
@@ -148,7 +150,8 @@ function playMatching(stage, ctx, total, tools) {
           el.classList.add('is-matched', 'pop');
           el.setAttribute('aria-pressed', 'false');
         });
-        btn.prepend(h('strong', { class: 'mono match-label', text: tool.name }));
+        btn.matchLabel.textContent = tool.name;
+        btn.matchLabel.removeAttribute('aria-hidden');
         matched += 1;
         ctx.progress(matched, total);
         status.replaceChildren(feedback('ok', `${tool.name}: zgadza się`, tool.note));

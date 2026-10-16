@@ -7,9 +7,11 @@ function pointsFor(setting, value) {
   return 0;
 }
 
-export function mountConfigAudit(stage, ctx, { settings, title, subtitle, iconName, okMessage, preview }) {
+export function mountConfigAudit(stage, ctx, { settings, title, subtitle, iconName, okMessage, preview, passRatio = 0 }) {
   const values = Object.fromEntries(settings.map((s) => [s.id, s.initial]));
-  const auditBox = h('div', { 'aria-live': 'polite' });
+  const auditBox = h('div', { class: 'status-stack', 'aria-live': 'polite' });
+  const required = Math.ceil(settings.length * passRatio);
+  let audited = false;
   const previewBox = preview ? h('div', { class: 'config-preview' }) : null;
   const sections = [...new Set(settings.map((s) => s.section))];
 
@@ -18,8 +20,11 @@ export function mountConfigAudit(stage, ctx, { settings, title, subtitle, iconNa
   }
 
   function update() {
-    ctx.progress(secureCount(), settings.length);
     if (previewBox) previewBox.replaceChildren(preview(values));
+    if (!audited) return;
+    audited = false;
+    ctx.hideProgress();
+    auditBox.replaceChildren(feedback('info', 'Konfiguracja się zmieniła', 'Uruchom audyt ponownie, żeby sprawdzić nowe ustawienia.'));
   }
 
   function control(setting) {
@@ -54,18 +59,37 @@ export function mountConfigAudit(stage, ctx, { settings, title, subtitle, iconNa
     )
   );
 
+  function issueItem(setting) {
+    const isPartial = values[setting.id] === setting.partial;
+    return h(
+      'li',
+      {},
+      icon(isPartial ? 'alert' : 'x'),
+      h('span', {}, h('strong', { class: setting.mono ? 'mono' : null, text: setting.label }), ` ${isPartial ? `${setting.issue} Akceptowalne, ale da się lepiej.` : setting.issue}`)
+    );
+  }
+
   function audit() {
     const issues = settings.filter((s) => values[s.id] !== s.best);
     const count = secureCount();
+    const title = `Audyt: ${count} z ${settings.length} ustawień bezpiecznych`;
+    audited = true;
+    ctx.progress(count, settings.length);
     if (!issues.length) {
       auditBox.replaceChildren(
-        feedback('ok', `Audyt: ${count} z ${settings.length} ustawień bezpiecznych`, okMessage),
+        feedback('ok', title, okMessage),
         h('div', { class: 'btn-row' }, button({ label: 'Zakończ konfigurację', variant: 'primary', iconAfter: 'arrowRight', onclick: finish }))
+      );
+    } else if (count < required) {
+      const goal = required === settings.length ? 'Do zaliczenia wszystkie ustawienia muszą być bezpieczne.' : `Do zaliczenia potrzeba co najmniej ${required} z ${settings.length} bezpiecznych ustawień.`;
+      auditBox.replaceChildren(
+        feedback('bad', title, `${goal} Popraw te pozycje i uruchom audyt ponownie. Rozwiń „Dlaczego to ważne?” przy ustawieniu, jeśli nie wiesz, co wybrać.`),
+        h('ul', { class: 'audit-list' }, issues.map(issueItem))
       );
     } else {
       auditBox.replaceChildren(
-        feedback(count >= settings.length * 0.66 ? 'warn' : 'bad', `Audyt: ${count} z ${settings.length} ustawień bezpiecznych`, 'Wykryte problemy:'),
-        h('ul', { class: 'audit-list' }, issues.map((s) => h('li', {}, icon(values[s.id] === s.partial ? 'alert' : 'x'), h('span', { text: values[s.id] === s.partial ? `${s.issue} Akceptowalne, ale da się lepiej.` : s.issue })))),
+        feedback(count >= settings.length * 0.66 ? 'warn' : 'bad', title, 'Wykryte problemy:'),
+        h('ul', { class: 'audit-list' }, issues.map(issueItem)),
         h('div', { class: 'btn-row' }, button({ label: 'Zakończ mimo to', iconAfter: 'arrowRight', onclick: finish }))
       );
     }
@@ -88,7 +112,8 @@ export function mountConfigAudit(stage, ctx, { settings, title, subtitle, iconNa
       auditBox
     )
   );
-  update();
+  ctx.hideProgress();
+  if (previewBox) previewBox.replaceChildren(preview(values));
 }
 
 export function settingsToQuestions(settings) {

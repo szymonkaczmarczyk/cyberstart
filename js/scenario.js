@@ -3,7 +3,7 @@ import { icon } from './icons.js';
 
 export function playScenario(stage, ctx, scenario, index, total, { label = 'Sytuacja', nextLabel = 'Następna sytuacja' } = {}) {
   return new Promise((resolve) => {
-    const status = h('div', { 'aria-live': 'polite' });
+    const status = h('div', { class: 'status-stack', 'aria-live': 'polite' });
     const choices = h('div', { class: 'choices' });
     const buttons = scenario.options.map((option, i) =>
       h(

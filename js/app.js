@@ -7,7 +7,7 @@ import { practiceFor } from './resources.js';
 import { TERM_NAMES } from './games/slownik.js';
 
 const SITE_NAME = 'Cyberstart';
-const DEFAULT_DESCRIPTION = `${GAMES.length} ${plural(GAMES.length, 'minigra', 'minigry', 'minigier')} po polsku, które uczą cyberbezpieczeństwa od zera: terminal Linuksa i mini CTF, sieci, hasła, phishing, firewall, analiza logów i egzamin z dyplomem.`;
+const DEFAULT_DESCRIPTION = `${GAMES.length} ${plural(GAMES.length, 'minigra', 'minigry', 'minigier')} po polsku, które uczą cyberbezpieczeństwa od zera: terminal Linuksa i mini CTF, sieci, hasła, phishing, firewall, analiza logów, śledztwa SOC i egzamin końcowy.`;
 
 const main = document.getElementById('main');
 const xpChip = document.getElementById('xp-chip');
@@ -267,6 +267,7 @@ function renderGame(game) {
   const bar = h('div', { class: 'progress-bar' });
   const label = h('span', { class: 'progress-label', text: 'start' });
   const track = h('div', { class: 'progress-track', role: 'progressbar', 'aria-label': 'Postęp w grze', 'aria-valuemin': '0', 'aria-valuemax': '100', 'aria-valuenow': '0' }, bar);
+  const progressBox = h('div', { class: 'stage-progress' }, h('div', { class: 'progress' }, track, label));
 
   const view = h(
     'div',
@@ -292,7 +293,7 @@ function renderGame(game) {
       h('summary', {}, icon('lightbulb'), h('span', { text: 'Zanim zaczniesz: minuta teorii' }), icon('chevronDown')),
       h('div', { class: 'lesson-body' }, game.lesson.map((part) => rich(part, part.startsWith('<ul') ? 'div' : 'p')))
     ),
-    h('div', { class: 'stage-progress' }, h('div', { class: 'progress' }, track, label)),
+    progressBox,
     stage
   );
   main.append(view);
@@ -302,10 +303,14 @@ function renderGame(game) {
     signal: viewController.signal,
     stage,
     progress(done, total) {
+      progressBox.hidden = false;
       const percent = total ? Math.min(100, Math.round((done / total) * 100)) : 0;
       bar.style.transform = `scaleX(${percent / 100})`;
       track.setAttribute('aria-valuenow', String(percent));
       label.textContent = `${Math.min(done, total)}/${total}`;
+    },
+    hideProgress() {
+      progressBox.hidden = true;
     },
     finish({ score, max }) {
       ctx.progress(max, max);
@@ -424,7 +429,7 @@ function route({ initial = false } = {}) {
   if (hash === '#/' || hash === '#') renderHub();
   else if (gameMatch && findGame(gameMatch[1])) renderGame(findGame(gameMatch[1]));
   else renderNotFound();
-  window.scrollTo({ top: 0 });
+  window.scrollTo({ top: 0, behavior: 'instant' });
   if (!initial) main.focus({ preventScroll: true });
 }
 

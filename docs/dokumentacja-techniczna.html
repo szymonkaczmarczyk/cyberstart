@@ -438,7 +438,7 @@ stage.append(terminal.element, terminal.quickBar);</pre>
     <tr><th>Zasada</th><th>Opis</th></tr>
     <tr><td>Samodzielność</td><td>Pytanie musi być zrozumiałe bez planszy gry. Pytania odwołujące się do konkretnego logu czy nagrania ruchu nie trafiają do puli.</td></tr>
     <tr><td>Rejestracja</td><td>Nową pulę dopisz do tablicy <code>TOPICS</code> w <code>egzamin.js</code>: <code>[tytuł, id gry, funkcja]</code>.</td></tr>
-    <tr><td>Próg</td><td>80%. Po zaliczeniu: dyplom do druku lub PDF (style <code>@media print</code> drukują tylko dyplom) i odznaka „Dyplom”.</td></tr>
+    <tr><td>Próg</td><td>80%. Po zaliczeniu odznaka „Egzamin zaliczony”. Wynik trafia do zapisu jak każda inna gra.</td></tr>
     <tr><td>Do powtórki</td><td>Tematy z błędnymi odpowiedziami pojawiają się jako linki do gier.</td></tr>
   </table>
 </section>
@@ -551,7 +551,7 @@ stage.append(terminal.element, terminal.quickBar);</pre>
     <tr><td><code>a11y.spec.js</code></td><td>axe-core (WCAG 2.2 AA) na każdym ekranie, w trakcie gry i na ekranie wyniku, w obu motywach.</td></tr>
     <tr><td><code>mobile.spec.js</code></td><td>Brak poziomego przewijania na wszystkich etapach gier, cele dotyku co najmniej 44 px.</td></tr>
     <tr><td><code>robustness.spec.js</code></td><td>Silnik terminala, obsługa klawiaturą, tryb offline, zmanipulowany import, brak błędów na wszystkich trasach.</td></tr>
-    <tr><td><code>exam.spec.js</code></td><td>Zaliczenie egzaminu, walidacja imienia, dyplom, widok wydruku, odznaka.</td></tr>
+    <tr><td><code>exam.spec.js</code></td><td>Zaliczenie egzaminu z odznaką oraz niezaliczony egzamin z listą tematów do powtórki i działającymi linkami.</td></tr>
     <tr><td><code>mechanics.spec.js</code></td><td>Wyzwanie dnia, seria, odznaki, linki do praktyki, service worker, ponowna gra, zapamiętany poziom.</td></tr>
     <tr><td><code>app.spec.js</code>, <code>interactions.spec.js</code></td><td>Mapa, tytuły stron, 404, pliki obowiązkowe, motyw, eksport i import, przeciąganie, skróty.</td></tr>
   </table>

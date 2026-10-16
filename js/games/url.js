@@ -116,7 +116,7 @@ export default {
 function playRound(stage, round, index, total) {
   return new Promise((resolve) => {
     let points = 0;
-    const status = h('div', { 'aria-live': 'polite' });
+    const status = h('div', { class: 'status-stack', 'aria-live': 'polite' });
     const verdict = h('div');
     const bar = h('div', { class: 'url-bar', role: 'group', 'aria-label': 'Części adresu do kliknięcia' }, icon('globe'));
     const tokenButtons = round.tokens.map((token, i) =>

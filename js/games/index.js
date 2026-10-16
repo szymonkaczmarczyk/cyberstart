@@ -68,7 +68,7 @@ export const CATEGORIES = [
     id: 'wiedza',
     title: 'Powtórka i egzamin',
     icon: 'book',
-    description: 'Najważniejsze pojęcia na fiszkach z powtórkami i egzamin końcowy z dyplomem.'
+    description: 'Najważniejsze pojęcia na fiszkach z powtórkami i egzamin końcowy z listą tematów do powtórki.'
   }
 ];
 

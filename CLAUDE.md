@@ -27,7 +27,7 @@ Obowiązują wspólne zasady z `~/.claude/CLAUDE.md` (styl, pisownia, design, br
 - `js/progress.js`: wyniki, XP, rangi (procent ukończonych gier), fiszki, seria, wyzwanie dnia, odznaki, poziom, eksport i import.
 - `js/badges.js`: definicje odznak i ich ocena po każdej grze.
 - `js/resources.js`: zewnętrzne materiały „Kolejny krok w praktyce” przypisane do gier.
-- Wspólne komponenty gier: `js/terminal-engine.js` (symulator terminala z potokami, przekierowaniami i wzorcami), `js/config-audit.js` (panel ustawień z audytem), `js/log-viewer.js` (przeglądarka logów z filtrem), `js/scenario.js` (scenariusze z punktacją 0, 1, 2).
+- Wspólne komponenty gier: `js/terminal-engine.js` (symulator terminala z potokami, przekierowaniami i wzorcami), `js/config-audit.js` (panel ustawień z audytem, opcjonalny próg zaliczenia `passRatio`, np. `1` = wszystkie ustawienia bezpieczne), `js/log-viewer.js` (przeglądarka logów z filtrem), `js/scenario.js` (scenariusze z punktacją 0, 1, 2).
 - `js/games/index.js`: rejestr gier i kategorii (kolejność = ścieżka nauki).
 - `js/games/<id>.js`: jedna gra = jeden moduł eksportujący `{ id, title, category, icon, minutes, summary, lesson[], takeaways[], mount(stage, ctx) }`.
 - `css/main.css`: style wspólne, `css/games.css`: style poszczególnych gier.
@@ -35,7 +35,7 @@ Obowiązują wspólne zasady z `~/.claude/CLAUDE.md` (styl, pisownia, design, br
 ## Kontrakt gry
 
 - `mount(stage, ctx)` rysuje grę w `stage`. Może być `async`.
-- `ctx.progress(zrobione, wszystkie)` aktualizuje pasek postępu.
+- `ctx.progress(zrobione, wszystkie)` aktualizuje i pokazuje pasek postępu. `ctx.hideProgress()` chowa pasek, gdy zdradzałby odpowiedź (panel audytu pokazuje go dopiero po uruchomieniu audytu).
 - `ctx.finish({ score, max })` zapisuje wynik (XP = score / max * 100, zapisywany najlepszy) i pokazuje podsumowanie z listą `takeaways`.
 - `ctx.signal` (AbortSignal) przerywa nasłuch klawiatury przy zmianie widoku. Skróty klawiszowe rejestruj przez `onKey(ctx.signal, ...)`.
 - `levels: true` włącza przełącznik poziomu (podstawowy, zaawansowany). Poziom trafia do `ctx.level`. Treści trzymaj w pulach, a zestaw na rozgrywkę losuj przez `draw(pula, ile, ctx.level)`. Elementy z `level: 'zaawansowany'` pojawiają się tylko na poziomie zaawansowanym.
@@ -50,7 +50,7 @@ Linux i Kali
 1. terminal: symulator terminala Kali, 12 misji (pwd, ls, cd, cat, ls -a, grep)
 2. uprawnienia: chmod, rwx, zapis ósemkowy, SUID, umask
 3. ctf: terminal poziom 2, 12 flag (find, file, potoki, sort, uniq, base64, chmod)
-4. ssh: utwardzanie sshd_config z podglądem pliku
+4. ssh: utwardzanie SSH, 24 ustawienia (metody logowania, limity, zbędne funkcje, kryptografia, logi, klucz FIDO2, fail2ban, aktualizacje, firewall), podgląd pliku `00-utwardzenie.conf`, zaliczenie tylko przy 24/24
 5. kali: dopasowanie narzędzi Kali + etyka i prawo
 6. instalacja: Kali w UTM lub VirtualBox, lista kontrolna i quiz
 
@@ -90,7 +90,7 @@ Obrona w praktyce
 
 Powtórka i egzamin
 33. slownik: 44 pojęcia na fiszkach z powtórkami w odstępach
-34. egzamin: 25 losowych pytań z 23 tematów, próg 80%, dyplom do druku lub PDF
+34. egzamin: 25 losowych pytań z 23 tematów, próg 80%, lista tematów do powtórki z linkami do gier
 
 ## Testy
 
@@ -98,7 +98,7 @@ Powtórka i egzamin
 - `tests/e2e/helpers.js` zawiera autoplayera, który przechodzi każdą grę do ekranu wyniku. Nowa gra z nietypową mechaniką potrzebuje obsługi w funkcji `special()` albo przycisku z atrybutem `data-autoplay`.
 - `tests/e2e/a11y.spec.js` uruchamia axe-core (WCAG 2.2 AA) na każdym ekranie, w trakcie gry i na ekranie wyniku, w obu motywach. Nowe komponenty muszą przechodzić ten audyt.
 - `tests/e2e/robustness.spec.js` sprawdza silnik terminala, obsługę klawiaturą, tryb offline, odrzucanie zmanipulowanego importu i brak błędów konsoli na wszystkich trasach.
-- Testy pilnują: przejścia wszystkich gier na obu poziomach, braku błędów w konsoli, braku poziomego przewijania na telefonie, celów dotyku min. 44 px, eksportu i importu postępu, przeciągania, skrótów, powtórek fiszek, zaliczenia egzaminu z dyplomem, wyzwania dnia, serii, odznak, linków do praktyki i rejestracji service workera.
+- Testy pilnują: przejścia wszystkich gier na obu poziomach, braku błędów w konsoli, braku poziomego przewijania na telefonie, celów dotyku min. 44 px, eksportu i importu postępu, przeciągania, skrótów, powtórek fiszek, zaliczenia i niezaliczenia egzaminu, wyzwania dnia, serii, odznak, linków do praktyki i rejestracji service workera.
 
 ## Jak dodać grę
 
@@ -112,6 +112,22 @@ Powtórka i egzamin
 - Pola `[[...]]` w `polityka-prywatnosci.html`, `regulamin.html`, `robots.txt` i `sitemap.xml` (dane administratora, domena, hosting).
 
 ## Dziennik zmian
+
+- 2026-10-16: Gra logi, pytanie o liczbę nieudanych prób z 203.0.113.45: poprawna odpowiedź to nadal 9, ale filtr „Failed” pokazuje 10 linii (linia 09 to Kasia z 198.51.100.23) i to myliło. Odpowiedź 15 zastąpiona pułapką 10 z wyjaśnieniem, poprawna odpowiedź mówi wprost o linii 09, a podpowiedź przy 3 nie każe już wpisywać dwóch fraz naraz (filtr szuka jednego ciągu). Cache service workera `cyberstart-v8`.
+
+- 2026-10-16: Gra sms nie miała żadnych stylów makiety telefonu (`.phone`, `.phone-head`, `.phone-avatar`, `.sms-bubble`), więc nadawca i kanał sklejały się w „Nieznany numerSMS”. Dodane style w `css/games.css`: nagłówek z okrągłym awatarem, nazwą nadawcy i kanałem pod spodem (`.phone-who`), dymek wiadomości, który po ocenie robi się czerwony (`is-scam`) albo zielony (`is-safe`). Cache service workera `cyberstart-v7`.
+
+- 2026-10-16: W grach phishing i sms werdykt, lista sygnałów 1/2/3 i przycisk „Następna wiadomość” mają większe odstępy: nowa klasa `.status-stack-loose` (odstęp `--s-6`, 32 px zamiast 16 px), a punkty listy `.flag-list` są rozsunięte o `--s-3`. Cache service workera `cyberstart-v6`.
+
+- 2026-10-16: Po przejściu z ekranu wyniku do kolejnej gry strona czasem zostawała na dole (widać było stopkę zamiast nagłówka i tytułu). Przyczyna: `window.scrollTo({ top: 0 })` w routerze dziedziczył `scroll-behavior: smooth` z `html`, a płynną animację przerywa bezwładność trackpada, dotyk albo karta w tle. Router przewija teraz natychmiast (`behavior: 'instant'`), to samo dla „Zagraj jeszcze raz” i zmiany poziomu. Test ekranu wyniku sprawdza, że nowa gra startuje od góry (headless Chromium nie animuje scrolla, więc sam błąd odtworzono ręcznie w przeglądarce). Cache service workera `cyberstart-v5`.
+
+- 2026-10-14: Dopasowywanie narzędzi w grze kali ma równe rzędy: od 640 px obie kolumny mają wiersze `1fr`, więc narzędzie i opis w tym samym rzędzie mają tę samą wysokość. Miejsce na nazwę narzędzia w opisie jest zarezerwowane od startu (wyszarzony znak „?”, ukryty przed czytnikami ekranu), więc po dopasowaniu nic nie skacze. Cache service workera `cyberstart-v4`.
+
+- 2026-10-14: Utwardzanie SSH rozbudowane z 10 do 24 ustawień, żeby dało się zabezpieczyć serwer w komplecie: KbdInteractiveAuthentication, AuthenticationMethods, LoginGraceTime, MaxStartups, AllowTcpForwarding, AllowAgentForwarding, PermitTunnel, KexAlgorithms, Ciphers, MACs, HostKey, LogLevel, klucz administratora (ed25519-sk), automatyczne aktualizacje. Opisy „Dlaczego to ważne?” tłumaczą każdą wartość. Lekcja o kolejności plików w `sshd_config.d` (wygrywa pierwsza wartość, więc `00-`) i o `sshd -T`. Decyzja właściciela: gra przepuszcza dalej tylko przy 24/24, a pasek postępu jest ukryty do pierwszego audytu i chowa się po każdej zmianie ustawień (dotyczy wszystkich gier z panelem audytu). Lista problemów pokazuje nazwę ustawienia. Kontenery komunikatów (`.status-stack`) mają odstęp między boksem a przyciskiem lub listą, we wszystkich grach. Cache service workera `cyberstart-v3`.
+
+- 2026-10-14: Otwarcie `index.html` z dysku (`file://`) pokazywało wieczne „Ładowanie gier…”, bo przeglądarki blokują wtedy moduły ES. Teraz strona wyświetla instrukcję uruchomienia (`npm start`, adres `http://localhost:4180`). Dwa nowe testy, ostrzeżenie w README.
+
+- 2026-10-14: Usunięty dyplom z egzaminu (na prośbę właściciela). Samodzielnie wygenerowany dyplom nie ma żadnej wartości, a nagrodą jest ukończenie gier i odznaka „Strażnik sieci”. Egzamin zostaje jako powtórka końcowa z listą tematów do powtórki. Odznaka „Dyplom” zastąpiona odznaką „Egzamin zaliczony”. Usunięte style dyplomu i wydruku.
 
 - 2026-10-14: Przygotowanie do publikacji na GitHub. `README.md` ze zrzutami ekranu na danych demo (`docs/screenshots/`), `LICENSE` (MIT, Szymon Kaczmarczyk), rozszerzony `.gitignore`, dokumentacja techniczna `docs/dokumentacja-techniczna.html` i `.pdf` (kontrakt gry, komponenty, format zapisu, testy), licencje OFL fontów w `fonts/`. Lokalny serwer w Node (`scripts/serve.mjs`) zamiast Pythona, także w testach. Poprawki z przeglądu zrzutów: 19 tekstów w formie męskiej zamienionych na neutralne, styl kodu w opisach poziomów i w liście „Zapamiętaj”.
 

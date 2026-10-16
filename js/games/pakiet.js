@@ -112,7 +112,7 @@ function playRound(stage, round, index, total) {
     while (order.every((item, i) => item.index === i)) order = shuffle(order);
     let attempts = 0;
     const list = h('ol', { class: 'order-list' });
-    const status = h('div', { 'aria-live': 'polite' });
+    const status = h('div', { class: 'status-stack', 'aria-live': 'polite' });
     const check = button({ label: 'Sprawdź kolejność', variant: 'primary', iconName: 'check', onclick: verify });
 
     function move(from, to) {

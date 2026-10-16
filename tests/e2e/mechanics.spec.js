@@ -50,9 +50,13 @@ test('przyciski na ekranie wyniku: zagraj jeszcze raz i następna gra', async ({
   await playGame(page, 'porty', { resume: true });
   const next = page.locator('.result a.btn-primary');
   const href = await next.getAttribute('href');
+  await page.setViewportSize({ width: 1280, height: 600 });
+  await page.evaluate(() => window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'instant' }));
   await next.click();
   await expect(page).toHaveURL(new RegExp(`${href.replace('#', '#')}$`));
   await expect(page.locator('h1')).not.toHaveText('Porty i usługi');
+  expect(await page.evaluate(() => window.scrollY)).toBe(0);
+  await expect(page.locator('h1')).toBeInViewport();
 });
 
 test('poziom trudności zostaje zapamiętany między grami', async ({ page }) => {
@@ -63,4 +67,44 @@ test('poziom trudności zostaje zapamiętany między grami', async ({ page }) =>
   await expect(page.locator('#level-zaawansowany')).toBeChecked();
   await page.reload();
   await expect(page.locator('#level-zaawansowany')).toBeChecked();
+});
+
+test('audyt SSH ukrywa pasek do audytu i przepuszcza dalej tylko przy komplecie', async ({ page }) => {
+  const errors = trackErrors(page);
+  await resetStorage(page);
+  await page.goto('/#/gra/ssh');
+  const progress = page.locator('.stage-progress');
+  const audit = page.getByRole('button', { name: 'Uruchom audyt' });
+  await expect(progress).toBeHidden();
+
+  await page.locator('label[for="opt-PermitRootLogin-no"]').click();
+  await expect(progress).toBeHidden();
+
+  await audit.click();
+  await expect(progress).toBeVisible();
+  await expect(page.locator('.feedback-bad')).toContainText('wszystkie ustawienia muszą być bezpieczne');
+  await expect(page.getByRole('button', { name: /Zakończ/ })).toHaveCount(0);
+
+  const settings = await page.evaluate(async () => (await import('/js/games/ssh.js')).AUDIT_SETTINGS.map(({ id, best }) => ({ id, best })));
+  for (const { id, best } of settings.slice(0, -1)) await page.locator(`label[for="opt-${id}-${best}"]`).click();
+  await expect(progress).toBeHidden();
+  await audit.click();
+  await expect(page.locator('.progress-label')).toHaveText(`${settings.length - 1}/${settings.length}`);
+  await expect(page.locator('.audit-list li')).toHaveCount(1);
+  await expect(page.getByRole('button', { name: /Zakończ/ })).toHaveCount(0);
+
+  const last = settings[settings.length - 1];
+  await page.locator(`label[for="opt-${last.id}-${last.best}"]`).click();
+  await audit.click();
+  await expect(page.locator('.progress-label')).toHaveText(`${settings.length}/${settings.length}`);
+  const finish = page.getByRole('button', { name: 'Zakończ konfigurację' });
+  const gap = await page.evaluate(() => {
+    const box = document.querySelector('.feedback-ok');
+    const row = box.nextElementSibling;
+    return row.offsetTop - (box.offsetTop + box.offsetHeight);
+  });
+  expect(gap).toBeGreaterThanOrEqual(12);
+  await finish.click();
+  await expect(page.locator('.result')).toContainText(`Wynik ${settings.length * 2} z ${settings.length * 2}`);
+  expect(errors).toEqual([]);
 });

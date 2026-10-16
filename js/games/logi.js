@@ -37,9 +37,9 @@ const QUESTIONS = [
   {
     prompt: `Ile nieudanych prób logowania wykonał adres <span class="mono">${ATTACKER}</span>?`,
     options: [
-      { label: '3', why: 'Policz dokładniej. Wpisz w filtr słowo Failed i adres IP.' },
-      { label: '9', correct: true, why: 'Dziewięć linii „Failed password” z tego adresu w niecałe 2 minuty. Człowiek tak szybko nie pisze, to automat.' },
-      { label: '15', why: 'To za dużo. Filtr „Failed” pomoże policzyć.' }
+      { label: '3', why: 'Policz dokładniej. Wpisz w filtr adres <span class="mono">203.0.113.45</span> i policz linie z „Failed”.' },
+      { label: '9', correct: true, why: 'Filtr „Failed” pokazuje 10 linii, ale linia 09 to pomyłka Kasi z innego adresu (<span class="mono">198.51.100.23</span>). Zostaje dziewięć prób z <span class="mono">203.0.113.45</span> w niecałe 2 minuty. Człowiek tak szybko nie pisze, to automat.' },
+      { label: '10', why: 'Tyle linii pokazuje filtr „Failed”, ale jedna z nich (linia 09, użytkownik kasia) pochodzi z adresu <span class="mono">198.51.100.23</span>. Zawsze sprawdzaj, skąd jest każda linia. Z <span class="mono">203.0.113.45</span> było dziewięć prób.' }
     ]
   },
   {

@@ -23,7 +23,7 @@ export const BADGES = [
   { id: 'seria-7', title: 'Tydzień nauki', text: 'Graj siedem dni z rzędu.', icon: 'flame', test: () => getStreak().count >= 7 },
   { id: 'wyzwanie', title: 'Wyzwanie przyjęte', text: 'Zalicz wyzwanie dnia.', icon: 'calendar', test: ({ outcome }) => Boolean(outcome?.daily) },
   { id: 'pamiec', title: 'Pamięć słonia', text: 'Utrwal 20 pojęć na fiszkach.', icon: 'book', test: ({ terms }) => cardStats(terms).learned >= 20 },
-  { id: 'dyplom', title: 'Dyplom', text: 'Zalicz egzamin końcowy (co najmniej 80%).', icon: 'trophy', test: () => (getResult('egzamin')?.xp ?? 0) >= 80 },
+  { id: 'egzamin', title: 'Egzamin zaliczony', text: 'Zdobądź co najmniej 80% na egzaminie końcowym.', icon: 'trophy', test: () => (getResult('egzamin')?.xp ?? 0) >= 80 },
   { id: 'straznik', title: 'Strażnik sieci', text: 'Ukończ wszystkie gry.', icon: 'shield', test: ({ games }) => games.every((game) => getResult(game.id)) }
 ];
 

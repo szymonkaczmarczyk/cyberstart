@@ -45,8 +45,8 @@ Jedna rozgrywka wygląda tak:
 2. Czytasz „minutę teorii”, wybierasz poziom (podstawowy albo zaawansowany) i grasz. Pytania i sytuacje są
    losowane z większej puli, więc każda próba jest trochę inna.
 3. Ekran wyniku pokazuje XP, nowe odznaki, długość serii dni, listę „Zapamiętaj” i materiały do dalszej nauki.
-4. Fiszki ze słowniczka wracają w odstępach 1, 3, 7, 14 i 30 dni. Na koniec czeka egzamin z 25 losowych pytań,
-   który od 80% daje dyplom do wydruku lub zapisania jako PDF.
+4. Fiszki ze słowniczka wracają w odstępach 1, 3, 7, 14 i 30 dni. Na koniec czeka egzamin z 25 losowych pytań
+   z całego kursu, który pokazuje, do których gier warto wrócić.
 
 ## Funkcje
 
@@ -57,7 +57,7 @@ Jedna rozgrywka wygląda tak:
 | Hasła i kryptografia | Laboratorium haseł, Zabezpiecz konto krok po kroku, Szyfry, hashe i kodowanie, Certyfikaty i kłódka HTTPS |
 | Ludzie i internet | Wykryj phishing, Nagłówki maila (SPF, DKIM, DMARC), Oszustwa SMS i w komunikatorach, Detektyw adresów, Socjotechnika, Audyt prywatności |
 | Obrona w praktyce | Zabezpiecz domowy router, Analityk SOC: auth.log, Analityk SOC: logi serwera WWW, Śledztwo na przejętym serwerze, Reakcja na ransomware, Malware i aktualizacje, Kopie zapasowe 3-2-1, Bezpieczny kod |
-| Powtórka i egzamin | Słowniczek na fiszkach (44 pojęcia), Egzamin końcowy z dyplomem |
+| Powtórka i egzamin | Słowniczek na fiszkach (44 pojęcia), Egzamin końcowy |
 
 **Mechaniki**
 
@@ -66,7 +66,7 @@ Jedna rozgrywka wygląda tak:
 - **Dwa poziomy trudności** i pule pytań w większości gier.
 - **Wyzwanie dnia, seria dni, 16 odznak i rangi** od Nowicjusza do Strażnika sieci.
 - **Fiszki z powtórkami w odstępach** i licznikiem „do powtórki” na mapie.
-- **Egzamin końcowy** z listą tematów do powtórki i dyplomem.
+- **Egzamin końcowy** z pytaniami ze wszystkich działów i listą tematów do powtórki.
 - **Eksport i import postępu** do pliku JSON, jasny i ciemny motyw, tryb offline.
 
 ## Zrzuty ekranu
@@ -79,15 +79,15 @@ Jedna rozgrywka wygląda tak:
 |---|---|
 | ![Terminal z wynikami last, ps aux i ss oraz pytanie śledcze](docs/screenshots/sledztwo.png) | ![Mail z zaznaczonymi sygnałami ostrzegawczymi i skrzynką odbiorczą](docs/screenshots/phishing.png) |
 
-| Ekran wyniku | Dyplom po egzaminie |
+| Ekran wyniku | Egzamin: tematy do powtórki |
 |---|---|
-| ![Wynik gry Jesteś firewallem z listą Zapamiętaj i linkiem do praktyki](docs/screenshots/wynik.png) | ![Dyplom ukończenia z imieniem i wynikiem egzaminu](docs/screenshots/dyplom.png) |
+| ![Wynik gry Jesteś firewallem z listą Zapamiętaj i linkiem do praktyki](docs/screenshots/wynik.png) | ![Wynik egzaminu z listą gier do powtórki](docs/screenshots/egzamin.png) |
 
 | Oszustwa SMS, ciemny motyw | Telefon: mapa | Telefon: terminal |
 |---|---|---|
 | ![Wiadomość SMS z banku w widoku telefonu, ciemny motyw](docs/screenshots/sms-ciemny.png) | ![Mapa nauki na ekranie telefonu](docs/screenshots/telefon-mapa.png) | ![Pierwsze kroki w terminalu na ekranie telefonu](docs/screenshots/telefon-terminal.png) |
 
-Postęp, imię na dyplomie i wszystkie dane w grach na zrzutach są przykładowe.
+Postęp i wszystkie dane w grach na zrzutach są przykładowe.
 
 ## Uruchomienie
 
@@ -97,7 +97,9 @@ Wymagany Node.js 18 lub nowszy. Sama aplikacja nie ma zależności.
 npm start
 ```
 
-Aplikacja działa pod `http://localhost:4180`. Do testów potrzebne są paczki deweloperskie:
+Aplikacja działa pod `http://localhost:4180`. Nie otwieraj `index.html` podwójnym kliknięciem: przeglądarki blokują
+moduły JavaScript z adresów `file://`, więc gry się nie wczytają (strona pokaże wtedy instrukcję uruchomienia).
+Bez Node.js zadziała też `python3 -m http.server 4180` w katalogu projektu. Do testów potrzebne są paczki deweloperskie:
 
 ```bash
 npm install
@@ -156,7 +158,7 @@ docs/
 ## Bezpieczeństwo i prywatność
 
 - Brak backendu, kont, ciasteczek śledzących i analityki. Postęp zapisuje się wyłącznie w `localStorage`.
-- Tekst wpisywany przez użytkownika (polecenia terminala, testowe hasła, imię na dyplomie) trafia do strony tylko
+- Tekst wpisywany przez użytkownika (polecenia terminala, testowe hasła, flagi CTF) trafia do strony tylko
   przez `textContent`. Nic nie jest nigdzie wysyłane.
 - Import postępu sprawdza format, rozmiar (do 512 kB) i każdą wartość. Zmanipulowane wpisy są pomijane.
 - Serwer lokalny nasłuchuje tylko na `127.0.0.1`, blokuje wyjście poza katalog projektu i pliki ukryte (np. `.git`).

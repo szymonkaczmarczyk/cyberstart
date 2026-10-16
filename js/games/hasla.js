@@ -192,7 +192,7 @@ export default {
     const timeLabel = h('strong', { class: 'pw-time', text: '-' });
     const details = h('div', { class: 'pw-details' });
     const missionList = h('ul', { class: 'pw-missions' });
-    const status = h('div', { 'aria-live': 'polite' });
+    const status = h('div', { class: 'status-stack', 'aria-live': 'polite' });
     const continueBtn = button({ label: 'Dalej: sprawdź wiedzę', variant: 'primary', iconAfter: 'arrowRight', disabled: true });
 
     function renderMissions() {

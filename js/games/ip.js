@@ -150,7 +150,7 @@ function playBits(stage, ctx, total, targets) {
       let revealed = false;
       const sum = h('strong', { class: 'bits-sum mono', text: '0' });
       const binary = h('code', { class: 'mono', text: '00000000' });
-      const status = h('div', { 'aria-live': 'polite' });
+      const status = h('div', { class: 'status-stack', 'aria-live': 'polite' });
       const bitButtons = BIT_VALUES.map((value, i) =>
         h(
           'button',
@@ -226,7 +226,7 @@ function playClassify(stage, ctx, total, addresses, offset) {
       }
       ctx.progress(offset + round, total);
       const item = addresses[round];
-      const status = h('div', { 'aria-live': 'polite' });
+      const status = h('div', { class: 'status-stack', 'aria-live': 'polite' });
       const buttons = CLASS_OPTIONS.map((option) =>
         button({
           label: option.label,

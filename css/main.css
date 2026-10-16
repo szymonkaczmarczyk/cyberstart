@@ -794,6 +794,15 @@ samp {
   gap: var(--s-5);
 }
 
+.status-stack {
+  display: grid;
+  gap: var(--s-4);
+}
+
+.status-stack-loose {
+  gap: var(--s-6);
+}
+
 .stage > *,
 .panel > *,
 .question > *,
@@ -1395,20 +1404,18 @@ samp {
   min-height: var(--tap);
 }
 
-.field-error {
-  display: flex;
-  align-items: center;
+.file-steps {
+  display: grid;
   gap: var(--s-2);
-  color: var(--danger);
-  font-size: var(--fs-small);
-  font-weight: 600;
+  margin: 0;
+  padding-left: 1.3em;
+  max-width: var(--measure);
+  line-height: 1.6;
 }
 
-.field-error .icon {
-  width: 16px;
-  height: 16px;
-}
-
-.input[aria-invalid="true"] {
-  border-color: var(--danger);
+.file-warning code {
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: var(--surface-2);
+  font-size: 0.9em;
 }

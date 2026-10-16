@@ -216,7 +216,7 @@ export default {
 
     const levelBox = h('div', { class: 'stage' });
     const flagInput = h('input', { class: 'input mono', id: 'ctf-flag', name: 'flag', type: 'text', autocomplete: 'off', spellcheck: false, autocapitalize: 'off', placeholder: 'FLAGA{...}' });
-    const flagStatus = h('div', { 'aria-live': 'polite' });
+    const flagStatus = h('div', { class: 'status-stack', 'aria-live': 'polite' });
     const submit = button({ label: 'Zgłoś flagę', variant: 'primary', iconName: 'flag', onclick: check });
     flagInput.addEventListener('keydown', (event) => {
       if (event.key === 'Enter') {
