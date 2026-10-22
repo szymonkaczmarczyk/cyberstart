@@ -1,5 +1,7 @@
 # Cyberstart
 
+**Polski** · [English](README.en.md)
+
 > Cyberbezpieczeństwo od zera, w 34 minigrach po polsku.
 
 Cyberstart to aplikacja do nauki cyberbezpieczeństwa dla osób, które zaczynają od zera. Zamiast wykładów są
