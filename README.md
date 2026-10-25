@@ -2,7 +2,7 @@
 
 **Polski** · [English](README.en.md)
 
-> Cyberbezpieczeństwo od zera, w 34 minigrach po polsku.
+> Cyberbezpieczeństwo od zera, w 36 minigrach po polsku.
 
 Cyberstart to aplikacja do nauki cyberbezpieczeństwa dla osób, które zaczynają od zera. Zamiast wykładów są
 krótkie gry: zdobywasz flagi w symulatorze terminala Kali Linux, rozpoznajesz phishing i oszustwa SMS, ustawiasz
@@ -32,7 +32,7 @@ zabezpieczenia i rozumieć, co jest legalne. Wszystkie firmy, logi, maile i adre
 ```
 index.html ──► js/app.js            router na hashu, mapa nauki, widok gry, ekran wyniku
                   │
-                  ├──► js/games/*.js     34 gry, każda w osobnym module
+                  ├──► js/games/*.js     36 gier, każda w osobnym module
                   │       └──► wspólne komponenty: terminal, panel audytu, przeglądarka logów,
                   │            quizy, scenariusze
                   ├──► js/progress.js    postęp w localStorage (nic nie wychodzi z przeglądarki)
@@ -57,9 +57,9 @@ Jedna rozgrywka wygląda tak:
 | Linux i Kali | Pierwsze kroki w terminalu, Uprawnienia plików, Terminal poziom 2: mini CTF, Utwardzanie SSH, Narzędzia Kali i etyka, Kali w maszynie wirtualnej |
 | Jak działa sieć | Warstwy sieci (OSI), Adresy IP i podsieci, Porty i usługi, Podróż danych przez sieć, Czytanie ruchu sieciowego, Raport skanu własnego serwera, Jesteś firewallem, Bezpieczne Wi-Fi |
 | Hasła i kryptografia | Laboratorium haseł, Zabezpiecz konto krok po kroku, Szyfry, hashe i kodowanie, Certyfikaty i kłódka HTTPS |
-| Ludzie i internet | Wykryj phishing, Nagłówki maila (SPF, DKIM, DMARC), Oszustwa SMS i w komunikatorach, Detektyw adresów, Socjotechnika, Audyt prywatności |
+| Ludzie i internet | Wykryj phishing, Nagłówki maila (SPF, DKIM, DMARC), Oszustwa SMS i w komunikatorach, Oszustwa przy sprzedaży z ogłoszeń, Detektyw adresów, Socjotechnika, Audyt prywatności |
 | Obrona w praktyce | Zabezpiecz domowy router, Analityk SOC: auth.log, Analityk SOC: logi serwera WWW, Śledztwo na przejętym serwerze, Reakcja na ransomware, Malware i aktualizacje, Kopie zapasowe 3-2-1, Bezpieczny kod |
-| Powtórka i egzamin | Słowniczek na fiszkach (44 pojęcia), Egzamin końcowy |
+| Powtórka i egzamin | Słowniczek na fiszkach (44 pojęcia), Powtórka błędów, Egzamin końcowy |
 
 **Mechaniki**
 
@@ -68,6 +68,7 @@ Jedna rozgrywka wygląda tak:
 - **Dwa poziomy trudności** i pule pytań w większości gier.
 - **Wyzwanie dnia, seria dni, 16 odznak i rangi** od Nowicjusza do Strażnika sieci.
 - **Fiszki z powtórkami w odstępach** i licznikiem „do powtórki” na mapie.
+- **Powtórka błędów:** pytania z błędnymi odpowiedziami w quizach i na egzaminie wracają, aż padnie dobra odpowiedź.
 - **Egzamin końcowy** z pytaniami ze wszystkich działów i listą tematów do powtórki.
 - **Eksport i import postępu** do pliku JSON, jasny i ciemny motyw, tryb offline.
 
@@ -112,8 +113,9 @@ npm run test:e2e
 | Skrypt | Co robi |
 |---|---|
 | `npm start` | Lokalny serwer bez zależności (`scripts/serve.mjs`) na porcie 4180 |
-| `npm run test:e2e` | Wszystkie testy Playwright (desktop i telefon), około 40 sekund |
+| `npm run test:e2e` | Wszystkie testy Playwright (desktop, telefon i porównanie zrzutów ekranu), około 2 minut |
 | `npm run test:e2e:ui` | Testy w trybie interaktywnym Playwright |
+| `npm run test:visual:update` | Odświeża wzorcowe zrzuty ekranu po zamierzonej zmianie wyglądu |
 
 ## Konfiguracja
 
@@ -146,7 +148,7 @@ js/
   ui.js                        budowanie DOM, quizy, losowanie, odmiana liczebników
   progress.js, badges.js, resources.js
   terminal-engine.js, config-audit.js, log-viewer.js, scenario.js   wspólne komponenty gier
-  games/                       34 gry i rejestr index.js
+  games/                       36 gier i rejestr index.js
 fonts/                         DM Sans i JetBrains Mono (woff2, z licencjami OFL)
 img/                           ikony, obraz Open Graph
 scripts/serve.mjs              lokalny serwer statyczny

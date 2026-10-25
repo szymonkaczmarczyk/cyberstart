@@ -3,6 +3,7 @@ test-results/
 playwright-report/
 blob-report/
 playwright/.cache/
+tests/e2e/visual.spec.js-snapshots/
 .playwright-mcp/
 
 .env
@@ -18,3 +19,17 @@ npm-debug.log*
 .idea/
 *.swp
 * 2.*
+
+CLAUDE.md
+CLAUDE.local.md
+AGENTS.md
+GEMINI.md
+zasady-projektu.md
+.claude/
+.cursor/
+.cursorrules
+.windsurf*
+.codex/
+.gemini/
+.aider*
+.github/copilot-instructions.md

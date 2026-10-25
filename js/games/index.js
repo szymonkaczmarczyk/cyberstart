@@ -27,10 +27,12 @@ import incydent from './incydent.js';
 import backup from './backup.js';
 import kod from './kod.js';
 import slownik from './slownik.js';
+import powtorka from './powtorka.js';
 import egzamin from './egzamin.js';
 import sledztwo from './sledztwo.js';
 import malware from './malware.js';
 import sms from './sms.js';
+import ogloszenia from './ogloszenia.js';
 import konto from './konto.js';
 
 export const CATEGORIES = [
@@ -56,7 +58,7 @@ export const CATEGORIES = [
     id: 'ludzie',
     title: 'Ludzie i internet',
     icon: 'users',
-    description: 'Najczęściej atakuje się człowieka, nie komputer. Fałszywe maile i ich nagłówki, oszustwa SMS, podejrzane linki, manipulacja i Twój ślad w sieci.'
+    description: 'Najczęściej atakuje się człowieka, nie komputer. Fałszywe maile i ich nagłówki, oszustwa SMS i przy sprzedaży z ogłoszeń, podejrzane linki, manipulacja i Twój ślad w sieci.'
   },
   {
     id: 'obrona',
@@ -68,7 +70,7 @@ export const CATEGORIES = [
     id: 'wiedza',
     title: 'Powtórka i egzamin',
     icon: 'book',
-    description: 'Najważniejsze pojęcia na fiszkach z powtórkami i egzamin końcowy z listą tematów do powtórki.'
+    description: 'Najważniejsze pojęcia na fiszkach, powtórka pytań z błędami i egzamin końcowy z listą tematów do powtórki.'
   }
 ];
 
@@ -94,6 +96,7 @@ export const GAMES = [
   phishing,
   naglowki,
   sms,
+  ogloszenia,
   url,
   socjotechnika,
   prywatnosc,
@@ -106,6 +109,7 @@ export const GAMES = [
   backup,
   kod,
   slownik,
+  powtorka,
   egzamin
 ];
 

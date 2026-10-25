@@ -53,12 +53,22 @@ export function playScenario(stage, ctx, scenario, index, total, { label = 'Sytu
         { class: 'panel' },
         h('div', { class: 'panel-title' }, h('span', { class: 'tag tag-accent', text: `${label} ${index + 1} z ${total}` }), scenario.time ? h('span', { class: 'tag mono' }, icon('clock'), scenario.time) : null),
         h('div', { class: 'scenario' }, h('span', { class: 'game-icon' }, icon(scenario.icon)), h('div', { class: 'prose' }, h('h2', { class: 't-h4', text: scenario.title }), h('p', { class: 'scenario-story', text: scenario.story }), scenario.phase ? h('span', { class: 'tag', text: scenario.phase }) : null)),
+        scenario.chat ? chatView(scenario) : null,
         h('p', { class: 'question-prompt', text: 'Co robisz?' }),
         choices,
         status
       )
     );
   });
+}
+
+function chatView({ contact, channel, chat }) {
+  return h(
+    'div',
+    { class: 'phone', role: 'group', 'aria-label': `Rozmowa z ${contact}` },
+    h('div', { class: 'phone-head' }, h('span', { class: 'phone-avatar' }, icon('users')), h('div', { class: 'phone-who' }, h('strong', { text: contact }), h('span', { class: 't-small t-muted', text: channel }))),
+    h('div', { class: 'phone-body chat' }, chat.map((message) => h('p', { class: `sms-bubble${message.me ? ' is-own' : ''}` }, h('span', { class: 'visually-hidden', text: message.me ? 'Ty: ' : `${contact}: ` }), message.text)))
+  );
 }
 
 export function scenarioQuestion(scenario) {

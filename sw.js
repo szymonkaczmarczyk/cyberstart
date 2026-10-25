@@ -1,4 +1,4 @@
-const CACHE = 'cyberstart-v8';
+const CACHE = 'cyberstart-v9';
 const SHELL = ['./', './index.html', './css/tokens.css', './css/main.css', './css/games.css', './js/app.js', './manifest.webmanifest', './img/icon.svg', './favicon.ico', './404.html'];
 
 self.addEventListener('install', (event) => {

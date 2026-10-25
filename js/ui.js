@@ -202,6 +202,7 @@ export function runQuiz(container, ctx, questions, { title, label = 'Pytanie', o
           nextLabel: index === questions.length - 1 ? 'Zakończ' : 'Dalej',
           onDone: (correct) => {
             if (correct) score += 1;
+            ctx.answer?.(q, correct);
             onAnswer?.(q, correct);
             index += 1;
             show();

@@ -1,6 +1,6 @@
 # Cyberstart: zasady projektu
 
-Edukacyjna aplikacja webowa z 34 minigrami o cyberbezpieczeństwie, sieciach, Linuksie (Kali) i zabezpieczeniach, dla osób zaczynających od zera. Wszystko po polsku, wszystko działa lokalnie w przeglądarce.
+Edukacyjna aplikacja webowa z 36 minigrami o cyberbezpieczeństwie, sieciach, Linuksie (Kali) i zabezpieczeniach, dla osób zaczynających od zera. Wszystko po polsku, wszystko działa lokalnie w przeglądarce.
 
 Obowiązują wspólne zasady z `~/.claude/CLAUDE.md` (styl, pisownia, design, brak komentarzy w kodzie). Ten plik je uzupełnia.
 
@@ -24,10 +24,10 @@ Obowiązują wspólne zasady z `~/.claude/CLAUDE.md` (styl, pisownia, design, br
 - `index.html`: szkielet, nagłówek, stopka (eksport, import, zerowanie postępu).
 - `js/app.js`: router, mapa nauki z sekcją „Dziś” (wyzwanie dnia, seria, odznaki), widok gry, ekran wyniku, motyw, rejestracja service workera.
 - `js/ui.js`: helper `h()` do budowania DOM, `choiceQuestion`, `runQuiz` (z `onAnswer`), `draw`, `feedback`, `onKey`, `scrollBehavior`.
-- `js/progress.js`: wyniki, XP, rangi (procent ukończonych gier), fiszki, seria, wyzwanie dnia, odznaki, poziom, eksport i import.
+- `js/progress.js`: wyniki, XP, rangi (procent ukończonych gier), fiszki, seria, wyzwanie dnia, odznaki, poziom, lista błędów do powtórki, eksport i import.
 - `js/badges.js`: definicje odznak i ich ocena po każdej grze.
 - `js/resources.js`: zewnętrzne materiały „Kolejny krok w praktyce” przypisane do gier.
-- Wspólne komponenty gier: `js/terminal-engine.js` (symulator terminala z potokami, przekierowaniami i wzorcami), `js/config-audit.js` (panel ustawień z audytem, opcjonalny próg zaliczenia `passRatio`, np. `1` = wszystkie ustawienia bezpieczne), `js/log-viewer.js` (przeglądarka logów z filtrem), `js/scenario.js` (scenariusze z punktacją 0, 1, 2).
+- Wspólne komponenty gier: `js/terminal-engine.js` (symulator terminala z potokami, przekierowaniami i wzorcami), `js/config-audit.js` (panel ustawień z audytem, opcjonalny próg zaliczenia `passRatio`, np. `1` = wszystkie ustawienia bezpieczne), `js/log-viewer.js` (przeglądarka logów z filtrem), `js/scenario.js` (scenariusze z punktacją 0, 1, 2, opcjonalnie z rozmową w makiecie telefonu: pola `contact`, `channel`, `chat[]` z `{ me?, text }`).
 - `js/games/index.js`: rejestr gier i kategorii (kolejność = ścieżka nauki).
 - `js/games/<id>.js`: jedna gra = jeden moduł eksportujący `{ id, title, category, icon, minutes, summary, lesson[], takeaways[], mount(stage, ctx) }`.
 - `css/main.css`: style wspólne, `css/games.css`: style poszczególnych gier.
@@ -40,7 +40,7 @@ Obowiązują wspólne zasady z `~/.claude/CLAUDE.md` (styl, pisownia, design, br
 - `ctx.signal` (AbortSignal) przerywa nasłuch klawiatury przy zmianie widoku. Skróty klawiszowe rejestruj przez `onKey(ctx.signal, ...)`.
 - `levels: true` włącza przełącznik poziomu (podstawowy, zaawansowany). Poziom trafia do `ctx.level`. Treści trzymaj w pulach, a zestaw na rozgrywkę losuj przez `draw(pula, ile, ctx.level)`. Elementy z `level: 'zaawansowany'` pojawiają się tylko na poziomie zaawansowanym.
 - Opcjonalne `badge()` zwraca krótki tekst (np. „5 do powtórki”), który mapa pokazuje na karcie gry z kropką uwagi.
-- Odpowiedzi w `runQuiz` są tasowane domyślnie.
+- Odpowiedzi w `runQuiz` są tasowane domyślnie. Po każdej odpowiedzi `runQuiz` woła `ctx.answer(pytanie, poprawna)`: zła odpowiedź trafia na listę błędów, dobra ją zdejmuje. Lista trzyma tylko klucz `idGry:skrótTreści` (FNV-1a) i datę, bez treści pytania, więc import pliku nie wstrzyknie HTML. Do powtórki wracają tylko pytania, które istnieją w `examPool()` danej gry.
 - Opcjonalny eksport `examPool()` udostępnia pytania do egzaminu końcowego (`js/games/egzamin.js` losuje z nich zestaw).
 - Treści z HTML (`lesson`, `takeaways`, `why`) to statyczne teksty autorskie. Tekst wpisany przez użytkownika zawsze przez `textContent`, nigdy przez `innerHTML`.
 
@@ -74,23 +74,25 @@ Ludzie i internet
 19. phishing: skrzynka z wiadomościami, także z kontekstem i quishingiem
 20. naglowki: nagłówki maila, SPF, DKIM, DMARC, Reply-To
 21. sms: smishing i oszustwa w komunikatorach (dopłata, „nowy numer dziecka”, kody, 8080)
-22. url: czytanie domen w adresach, punycode
-23. socjotechnika: scenariusze reakcji
-24. prywatnosc: audyt cyfrowego śladu
+22. ogloszenia: oszustwa przy sprzedaży i kupowaniu z ogłoszeń (link do „odbioru pieniędzy”, przejście na komunikator, fałszywy przelew, nadpłata, BLIK, fałszywa bramka płatności, kod z SMS), rozmowy w makiecie telefonu
+23. url: czytanie domen w adresach, punycode
+24. socjotechnika: scenariusze reakcji
+25. prywatnosc: audyt cyfrowego śladu
 
 Obrona w praktyce
-25. router: zabezpieczanie domowego routera
-26. logi: analityk SOC, auth.log
-27. weblogi: analityk SOC, access.log serwera WWW
-28. sledztwo: terminal na przejętym serwerze (last, ps aux, ss -tulpn, cron, /etc/passwd, authorized_keys)
-29. incydent: reakcja na ransomware krok po kroku
-30. malware: typy złośliwego oprogramowania, priorytety łatek CVE i CVSS, aktualizacje
-31. backup: kopie 3-2-1 z symulacją awarii
-32. kod: bezpieczniejszy fragment kodu (SQL injection, XSS, IDOR, path traversal)
+26. router: zabezpieczanie domowego routera
+27. logi: analityk SOC, auth.log
+28. weblogi: analityk SOC, access.log serwera WWW
+29. sledztwo: terminal na przejętym serwerze (last, ps aux, ss -tulpn, cron, /etc/passwd, authorized_keys)
+30. incydent: reakcja na ransomware krok po kroku
+31. malware: typy złośliwego oprogramowania, priorytety łatek CVE i CVSS, aktualizacje
+32. backup: kopie 3-2-1 z symulacją awarii
+33. kod: bezpieczniejszy fragment kodu (SQL injection, XSS, IDOR, path traversal)
 
 Powtórka i egzamin
-33. slownik: 44 pojęcia na fiszkach z powtórkami w odstępach
-34. egzamin: 25 losowych pytań z 23 tematów, próg 80%, lista tematów do powtórki z linkami do gier
+34. slownik: 44 pojęcia na fiszkach z powtórkami w odstępach
+35. powtorka: pytania z błędami z quizów i egzaminu, dopełnione do 10 losowymi pytaniami z ukończonych gier (albo z całego kursu na początku nauki), `badge()` z liczbą do powtórki
+36. egzamin: 25 losowych pytań z 24 tematów, próg 80%, lista tematów do powtórki z linkami do gier
 
 ## Testy
 
@@ -98,20 +100,29 @@ Powtórka i egzamin
 - `tests/e2e/helpers.js` zawiera autoplayera, który przechodzi każdą grę do ekranu wyniku. Nowa gra z nietypową mechaniką potrzebuje obsługi w funkcji `special()` albo przycisku z atrybutem `data-autoplay`.
 - `tests/e2e/a11y.spec.js` uruchamia axe-core (WCAG 2.2 AA) na każdym ekranie, w trakcie gry i na ekranie wyniku, w obu motywach. Nowe komponenty muszą przechodzić ten audyt.
 - `tests/e2e/robustness.spec.js` sprawdza silnik terminala, obsługę klawiaturą, tryb offline, odrzucanie zmanipulowanego importu i brak błędów konsoli na wszystkich trasach.
-- Testy pilnują: przejścia wszystkich gier na obu poziomach, braku błędów w konsoli, braku poziomego przewijania na telefonie, celów dotyku min. 44 px, eksportu i importu postępu, przeciągania, skrótów, powtórek fiszek, zaliczenia i niezaliczenia egzaminu, wyzwania dnia, serii, odznak, linków do praktyki i rejestracji service workera.
+- `tests/e2e/visual.spec.js` porównuje zrzuty ekranu: mapa (cała strona), każda gra na starcie i po pierwszym ruchu oraz ekran wyniku, w obu motywach. `Math.random` ma stałe ziarno, czas jest zamrożony, a każda trasa jest przeładowywana, żeby losowanie zawsze startowało od początku. Tolerancja to 100 pikseli, więc drobna usterka stylu (np. brak stylów jednego elementu) wywala test. Wzorce są tylko dla macOS i nie trafiają do gita (`.gitignore`). Po zamierzonej zmianie wyglądu uruchom `npm run test:visual:update` i obejrzyj zmienione zrzuty.
+- Testy pilnują: przejścia wszystkich gier na obu poziomach, braku błędów w konsoli, braku poziomego przewijania na telefonie, celów dotyku min. 44 px, eksportu i importu postępu, przeciągania, skrótów, powtórek fiszek, powtórki błędów i walidacji jej importu, zaliczenia i niezaliczenia egzaminu, wyzwania dnia, serii, odznak, linków do praktyki i rejestracji service workera.
 
 ## Jak dodać grę
 
 1. Utwórz `js/games/<id>.js` według kontraktu powyżej.
 2. Dodaj import i wpis w `GAMES` w `js/games/index.js`.
 3. Style dopisz do `css/games.css`, używając tokenów.
-4. Uruchom `npm run test:e2e` i sprawdź oba motywy.
+4. Uruchom `npm run test:visual:update`, obejrzyj nowe zrzuty, a potem `npm run test:e2e` i sprawdź oba motywy.
 
 ## Do uzupełnienia przed wdrożeniem
 
 - Pola `[[...]]` w `polityka-prywatnosci.html`, `regulamin.html`, `robots.txt` i `sitemap.xml` (dane administratora, domena, hosting).
 
 ## Dziennik zmian
+
+- 2026-10-25: Dokumentacja techniczna (`docs/dokumentacja-techniczna.html` i `.pdf`) uzupełniona o: `ctx.answer` i `ctx.hideProgress`, rozmowę w `playScenario` (`contact`, `channel`, `chat`) z przykładem, `topicQuestions()`, nową sekcję „Powtórka błędów” (klucze, limit, decyzje), klucz `mistakes` w zapisie i walidację przy imporcie, testy wizualne i krótką listę kontrolną przed nową wersją. Układ PDF przerobiony według wzoru z `project-docs`: sekcje płyną bez wymuszonych podziałów, tabele mają `<thead>`, długie bloki kodu mogą się dzielić z `orphans`/`widows` 5. Było 23 strony, z czego 13 poniżej 75%. Jest 19 stron, każda 75-100%, bez pojedynczych wierszy tabel na nowej stronie.
+
+- 2026-10-24: Trzy usprawnienia z listy propozycji (kolejność 1, 3, 5, zaakceptowana przez właściciela).
+  1. Wizualne testy regresji `tests/e2e/visual.spec.js` (76 zrzutów, oba motywy) ze stałym ziarnem losowania, zamrożonym czasem i tolerancją 100 pikseli. Sprawdzone, że wykrywają usunięcie jednej reguły CSS (np. `.phone-who`), a trzy przebiegi z rzędu dają identyczne zrzuty. Wzorce tylko lokalnie (`.gitignore`), odświeżanie przez `npm run test:visual:update`.
+  2. Powtórka błędów: `runQuiz` zapisuje każdą odpowiedź przez `ctx.answer`, `progress.js` trzyma listę błędów (klucz `idGry:skrót`, limit 300 wpisów, walidacja przy imporcie), nowa gra `powtorka` (35. na ścieżce) z licznikiem „do powtórki” na mapie, wykluczona z wyzwania dnia (jak słownik i egzamin). Egzamin udostępnia `topicQuestions()`.
+  3. Nowa gra `ogloszenia` (22. na ścieżce, dział Ludzie i internet): 8 sytuacji przy sprzedaży i kupowaniu z ogłoszeń, rozmowy w makiecie telefonu (rozszerzenie `playScenario` o `chat`), pytania w egzaminie, linki do CERT Polska i Bezpiecznego Banku. Marki fikcyjne: Targowisko, Kurier Szybko. Nowa ikona `package`.
+  Razem 36 gier: meta w `index.html`, oba README i obraz OG (`img/og.png` odtworzony w 1200x630 w tym samym układzie, z liczbą 36). Cache service workera `cyberstart-v9`. 113 testów e2e przechodzi.
 
 - 2026-10-16: Gra logi, pytanie o liczbę nieudanych prób z 203.0.113.45: poprawna odpowiedź to nadal 9, ale filtr „Failed” pokazuje 10 linii (linia 09 to Kasia z 198.51.100.23) i to myliło. Odpowiedź 15 zastąpiona pułapką 10 z wyjaśnieniem, poprawna odpowiedź mówi wprost o linii 09, a podpowiedź przy 3 nie każe już wpisywać dwóch fraz naraz (filtr szuka jednego ciągu). Cache service workera `cyberstart-v8`.
 

@@ -2,6 +2,8 @@ const STORAGE_KEY = 'cyberstart:v1';
 const EXPORT_FORMAT = 'cyberstart-progress';
 const DAY_MS = 86400000;
 const CARD_INTERVALS = [0, 1, 3, 7, 14, 30];
+const MISTAKE_LIMIT = 300;
+const MISTAKE_KEY = /^[a-z0-9-]{1,40}:[a-z0-9]{1,8}$/;
 
 const RANKS = [
   { share: 0, name: 'Nowicjusz' },
@@ -13,7 +15,7 @@ const RANKS = [
 ];
 
 function emptyState() {
-  return { results: {}, theme: null, cards: {}, streak: { last: null, count: 0, best: 0 }, daily: null, badges: {}, difficulty: 'podstawowy' };
+  return { results: {}, theme: null, cards: {}, streak: { last: null, count: 0, best: 0 }, daily: null, badges: {}, difficulty: 'podstawowy', mistakes: {} };
 }
 
 function read() {
@@ -137,6 +139,37 @@ export function getBadges() {
   return { ...state.badges };
 }
 
+function hashText(text) {
+  let hash = 2166136261;
+  for (const char of text) {
+    hash ^= char.codePointAt(0);
+    hash = Math.imul(hash, 16777619);
+  }
+  return (hash >>> 0).toString(36);
+}
+
+export function mistakeKey(gameId, prompt) {
+  return `${gameId}:${hashText(String(prompt))}`;
+}
+
+export function noteAnswer(gameId, prompt, correct) {
+  if (typeof prompt !== 'string') return;
+  const key = mistakeKey(gameId, prompt);
+  if (correct) {
+    if (!state.mistakes[key]) return;
+    delete state.mistakes[key];
+  } else {
+    state.mistakes[key] = new Date().toISOString();
+    const keys = Object.keys(state.mistakes);
+    if (keys.length > MISTAKE_LIMIT) keys.sort((a, b) => state.mistakes[a].localeCompare(state.mistakes[b])).slice(0, keys.length - MISTAKE_LIMIT).forEach((old) => delete state.mistakes[old]);
+  }
+  write();
+}
+
+export function getMistakes() {
+  return { ...state.mistakes };
+}
+
 export function getDifficulty() {
   return state.difficulty === 'zaawansowany' ? 'zaawansowany' : 'podstawowy';
 }
@@ -201,6 +234,9 @@ export function importProgress(text, validGameIds) {
     if (/^[a-z0-9-]{1,40}$/.test(id) && isIso(date)) next.badges[id] = date;
   }
   if (source.difficulty === 'zaawansowany') next.difficulty = 'zaawansowany';
+  for (const [key, date] of Object.entries(source.mistakes ?? {}).slice(0, MISTAKE_LIMIT)) {
+    if (MISTAKE_KEY.test(key) && isIso(date)) next.mistakes[key] = date;
+  }
 
   state = next;
   write();

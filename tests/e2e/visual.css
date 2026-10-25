@@ -1,0 +1,4 @@
+.topbar,
+.stage-progress {
+  position: static !important;
+}

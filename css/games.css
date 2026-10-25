@@ -1201,6 +1201,22 @@
   transition: border-color var(--dur) var(--ease), background-color var(--dur) var(--ease);
 }
 
+.chat {
+  display: grid;
+  gap: var(--s-3);
+}
+
+.chat .sms-bubble {
+  justify-self: start;
+}
+
+.chat .sms-bubble.is-own {
+  justify-self: end;
+  border-color: transparent;
+  border-radius: var(--r-lg) var(--r-lg) var(--r-sm) var(--r-lg);
+  background: var(--accent-soft);
+}
+
 .sms-bubble.is-scam {
   border-color: var(--danger);
   background: var(--danger-soft);

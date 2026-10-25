@@ -21,6 +21,7 @@ import { examPool as osi } from './osi.js';
 import { examPool as url } from './url.js';
 import { examPool as malware } from './malware.js';
 import { examPool as sms } from './sms.js';
+import { examPool as ogloszenia } from './ogloszenia.js';
 import { examPool as konto } from './konto.js';
 
 const EXAM_SIZE = 25;
@@ -100,6 +101,7 @@ const TOPICS = [
   ['Certyfikaty i kłódka HTTPS', 'certyfikaty', certyfikaty],
   ['Nagłówki maila', 'naglowki', naglowki],
   ['Oszustwa SMS i w komunikatorach', 'sms', sms],
+  ['Oszustwa przy sprzedaży z ogłoszeń', 'ogloszenia', ogloszenia],
   ['Detektyw adresów', 'url', url],
   ['Socjotechnika', 'socjotechnika', socjotechnika],
   ['Audyt prywatności', 'prywatnosc', prywatnosc],
@@ -111,6 +113,10 @@ const TOPICS = [
 
 export function allExamQuestions() {
   return TOPICS.flatMap(([, , pool]) => pool());
+}
+
+export function topicQuestions() {
+  return TOPICS.flatMap(([title, id, pool]) => pool().map((q) => ({ ...q, topic: title, topicId: id })));
 }
 
 function buildExam() {

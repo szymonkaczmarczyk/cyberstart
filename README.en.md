@@ -2,7 +2,7 @@
 
 [Polski](README.md) · **English**
 
-> Cybersecurity from zero, in 34 minigames in Polish.
+> Cybersecurity from zero, in 36 minigames in Polish.
 
 Cyberstart is an app for learning cybersecurity for people starting from scratch. Instead of lectures there are
 short games: you capture flags in a Kali Linux terminal simulator, spot phishing and SMS scams, set up a firewall,
@@ -33,7 +33,7 @@ protections and understand what is legal. All companies, logs, emails and addres
 ```
 index.html ──► js/app.js            hash router, learning map, game view, result screen
                   │
-                  ├──► js/games/*.js     34 games, each in its own module
+                  ├──► js/games/*.js     36 games, each in its own module
                   │       └──► shared components: terminal, audit panel, log viewer,
                   │            quizzes, scenarios
                   ├──► js/progress.js    progress in localStorage (nothing leaves the browser)
@@ -59,9 +59,9 @@ One play session looks like this:
 | Linux and Kali | First steps in the terminal, File permissions, Terminal level 2: mini CTF, SSH hardening, Kali tools and ethics, Kali in a virtual machine |
 | How the network works | Network layers (OSI), IP addresses and subnets, Ports and services, Data's journey through the network, Reading network traffic, Scan report of your own server, You are the firewall, Secure Wi-Fi |
 | Passwords and cryptography | Password lab, Secure your account step by step, Ciphers, hashes and encoding, Certificates and the HTTPS padlock |
-| People and the internet | Spot the phishing, Email headers (SPF, DKIM, DMARC), SMS and messenger scams, Address detective, Social engineering, Privacy audit |
+| People and the internet | Spot the phishing, Email headers (SPF, DKIM, DMARC), SMS and messenger scams, Classified ads scams, Address detective, Social engineering, Privacy audit |
 | Defense in practice | Secure your home router, SOC analyst: auth.log, SOC analyst: web server logs, Investigating a compromised server, Ransomware response, Malware and updates, 3-2-1 backups, Secure code |
-| Review and exam | Glossary flashcards (44 terms), Final exam |
+| Review and exam | Glossary flashcards (44 terms), Mistake review, Final exam |
 
 **Mechanics**
 
@@ -70,6 +70,7 @@ One play session looks like this:
 - **Two difficulty levels** and question pools in most games.
 - **Daily challenge, day streak, 16 badges and ranks** from Novice to Network Guardian.
 - **Spaced repetition flashcards** with a "due for review" counter on the map.
+- **Mistake review:** questions answered wrong in quizzes and the exam come back until you get them right.
 - **Final exam** with questions from all sections and a list of topics to review.
 - **Progress export and import** to a JSON file, light and dark theme, offline mode.
 
@@ -114,8 +115,9 @@ npm run test:e2e
 | Script | What it does |
 |---|---|
 | `npm start` | Local dependency-free server (`scripts/serve.mjs`) on port 4180 |
-| `npm run test:e2e` | All Playwright tests (desktop and phone), about 40 seconds |
+| `npm run test:e2e` | All Playwright tests (desktop, phone and screenshot comparison), about 2 minutes |
 | `npm run test:e2e:ui` | Tests in Playwright's interactive mode |
+| `npm run test:visual:update` | Refreshes the baseline screenshots after an intended visual change |
 
 ## Configuration
 
@@ -148,7 +150,7 @@ js/
   ui.js                        DOM building, quizzes, randomization, Polish number agreement
   progress.js, badges.js, resources.js
   terminal-engine.js, config-audit.js, log-viewer.js, scenario.js   shared game components
-  games/                       34 games and the index.js registry
+  games/                       36 games and the index.js registry
 fonts/                         DM Sans and JetBrains Mono (woff2, with OFL licenses)
 img/                           icons, Open Graph image
 scripts/serve.mjs              local static server

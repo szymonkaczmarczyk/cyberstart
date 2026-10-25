@@ -60,6 +60,7 @@ const BY_GAME = {
   sledztwo: ['tryhackme', 'lynis'],
   malware: ['cisaKev', 'cert'],
   sms: ['certWarnings', 'bezpiecznyBank'],
+  ogloszenia: ['certIncident', 'bezpiecznyBank'],
   konto: ['hibp'],
   egzamin: ['tryhackme', 'bandit', 'portswigger']
 };

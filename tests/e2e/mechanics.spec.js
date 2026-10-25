@@ -108,3 +108,51 @@ test('audyt SSH ukrywa pasek do audytu i przepuszcza dalej tylko przy komplecie'
   await expect(page.locator('.result')).toContainText(`Wynik ${settings.length * 2} z ${settings.length * 2}`);
   expect(errors).toEqual([]);
 });
+
+test('powtórka błędów wraca do pytań z błędami i zdejmuje je po dobrej odpowiedzi', async ({ page }) => {
+  await resetStorage(page);
+  await page.goto('/#/');
+  const question = await page.evaluate(async () => {
+    const { noteAnswer } = await import('/js/progress.js');
+    const { examPool } = await import('/js/games/porty.js');
+    const picked = examPool()[0];
+    noteAnswer('porty', picked.prompt, false);
+    return { prompt: picked.prompt, correct: picked.options.find((option) => option.correct).label };
+  });
+  await page.reload();
+  await expect(page.locator('a.game-card[href="#/gra/powtorka"]')).toContainText('1 do powtórki');
+
+  await page.goto('/#/gra/powtorka');
+  await expect(page.locator('.stage .feedback')).toContainText('Do powtórki: 1 pytanie');
+  await page.getByRole('button', { name: 'Zacznij powtórkę' }).click();
+  const prompt = await page.locator('.question-prompt').innerHTML();
+  expect(prompt).toBe(question.prompt);
+  const choices = page.locator('.choice');
+  const count = await choices.count();
+  for (let i = 0; i < count; i += 1) {
+    if ((await choices.nth(i).locator('.choice-text').innerHTML()) === question.correct) {
+      await choices.nth(i).click();
+      break;
+    }
+  }
+  await expect(page.locator('.question .feedback-ok')).toBeVisible();
+  await page.locator('.question .btn-primary').click();
+  const left = await page.evaluate(async () => Object.keys((await import('/js/progress.js')).getMistakes()).length);
+  expect(left).toBe(0);
+});
+
+test('import przyjmuje tylko poprawne wpisy powtórki błędów', async ({ page }) => {
+  await resetStorage(page);
+  await page.goto('/#/');
+  const kept = await page.evaluate(async () => {
+    const { importProgress, getMistakes } = await import('/js/progress.js');
+    const file = JSON.stringify({
+      format: 'cyberstart-progress',
+      version: 1,
+      data: { results: {}, mistakes: { 'porty:abc123': '2026-10-20T10:00:00.000Z', '<img src=x>:1': '2026-10-20T10:00:00.000Z', 'porty:zzz': 'wczoraj' } }
+    });
+    importProgress(file, ['porty']);
+    return Object.keys(getMistakes());
+  });
+  expect(kept).toEqual(['porty:abc123']);
+});

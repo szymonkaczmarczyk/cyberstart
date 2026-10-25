@@ -100,6 +100,19 @@
     h2, h3, h4 { break-after: avoid; }
   }
 </style>
+<style>
+  @media print {
+    table { break-inside: auto; }
+    tr, pre, .endpoint, li { break-inside: avoid; }
+    thead { display: table-header-group; }
+    .keep { break-inside: avoid; break-after: avoid; }
+    .keep + table, .keep + pre, .keep + ul { break-before: avoid; }
+    .break { break-before: page; }
+    main > section { margin-top: 30px; }
+    pre.flow { break-inside: auto; orphans: 5; widows: 5; }
+    h2, h3, h4 { break-after: avoid; break-inside: avoid; }
+  }
+</style>
 </head>
 <body>
 <main>
@@ -111,7 +124,8 @@
   <code>js/config-audit.js</code>, <code>js/log-viewer.js</code>, <code>js/scenario.js</code>. Stan: <code>js/progress.js</code>.
 </p>
 <pre>npm start              http://localhost:4180   (serwer bez zależności, scripts/serve.mjs)
-npm run test:e2e       testy Playwright, port 4181</pre>
+npm run test:e2e       testy Playwright, port 4181
+npm run test:visual:update   nowe wzorcowe zrzuty po zamierzonej zmianie wyglądu</pre>
 
 <h3>Spis treści</h3>
 <ol class="toc">
@@ -126,11 +140,12 @@ npm run test:e2e       testy Playwright, port 4181</pre>
   <li><a href="#logs">logViewer</a></li>
   <li><a href="#scenario">playScenario</a></li>
   <li><a href="#exam">examPool i egzamin</a></li>
+  <li><a href="#review">Powtórka błędów</a></li>
   <li><a href="#storage">Zapis postępu (localStorage)</a></li>
   <li><a href="#export">Eksport i import postępu</a></li>
   <li><a href="#badges">Odznaki i materiały</a></li>
   <li><a href="#pwa">PWA i service worker</a></li>
-  <li><a href="#tests">Testy e2e</a></li>
+  <li><a href="#tests">Testy e2e i testy wizualne</a></li>
 </ol>
 
 <section id="arch">
@@ -151,7 +166,7 @@ npm run test:e2e       testy Playwright, port 4181</pre>
 sw.js ──► offline: najpierw sieć, potem pamięć podręczna</pre>
   <p>Routing działa na hashu adresu, więc aplikacja działa na każdym hostingu statycznym bez konfiguracji przekierowań:</p>
   <table>
-    <tr><th>Adres</th><th>Widok</th></tr>
+    <thead><tr><th>Adres</th><th>Widok</th></tr></thead>
     <tr><td><code>#/</code></td><td>Mapa nauki: hero, sekcja „Dziś” (wyzwanie dnia, seria, odznaki), kategorie z grami, lista odznak.</td></tr>
     <tr><td><code>#/gra/{id}</code></td><td>Gra: nagłówek, przełącznik poziomu (jeśli gra go ma), „minuta teorii”, pasek postępu, plansza gry.</td></tr>
     <tr><td><code>#mapa</code>, <code>#odznaki</code></td><td>Przewinięcie mapy do sekcji, bez zmiany widoku.</td></tr>
@@ -160,22 +175,22 @@ sw.js ──► offline: najpierw sieć, potem pamięć podręczna</pre>
   <p class="note">Przy zmianie trasy aplikacja przerywa nasłuch klawiatury poprzedniej gry (<code>AbortController</code>) i przenosi fokus na <code>&lt;main&gt;</code> dla czytników ekranu. Przy pierwszym wczytaniu fokus zostaje na początku strony, żeby link „Przejdź do treści” był pierwszy pod klawiszem Tab.</p>
 </section>
 
-<section id="conv" class="page">
+<section id="conv">
   <h2>Konwencje treści i kodu</h2>
   <table>
-    <tr><th>Zasada</th><th>Opis</th></tr>
+    <thead><tr><th>Zasada</th><th>Opis</th></tr></thead>
     <tr><td>Język</td><td>Całe UI po polsku. Formy neutralne płciowo: zamiast „grałeś” piszemy „Dzisiejsza gra zaliczona”, zamiast „sam dzwonię” piszemy „samodzielnie dzwonię”.</td></tr>
     <tr><td>Liczebniki</td><td>Zawsze przez <code>plural(n, 'gra', 'gry', 'gier')</code>. Nigdy „34 minigier”.</td></tr>
     <tr><td>Interpunkcja</td><td>Separator to zwykły łącznik. Bez pauz (em dash) i bez średnika jako pauzy w zdaniu.</td></tr>
     <tr><td>HTML w treściach</td><td>Pola <code>lesson</code>, <code>takeaways</code>, <code>why</code>, <code>prompt</code>, <code>label</code> to statyczne, autorskie teksty i mogą zawierać <code>&lt;code&gt;</code> czy <code>&lt;strong&gt;</code>. Tekst wpisany przez użytkownika trafia do DOM wyłącznie przez <code>textContent</code>.</td></tr>
-    <tr><td>Fikcja</td><td>Marki są fikcyjne (Bank Horyzont, Kurier Szybko). Adresy IP pochodzą z zakresów dokumentacyjnych <code>192.0.2.0/24</code>, <code>198.51.100.0/24</code>, <code>203.0.113.0/24</code> lub prywatnych.</td></tr>
+    <tr><td>Fikcja</td><td>Marki są fikcyjne (Bank Horyzont, Kurier Szybko, serwis ogłoszeniowy Targowisko). Numery telefonów w rozmowach pochodzą z zakresu dla fikcji (<code>+44 7700 900xxx</code>). Adresy IP pochodzą z zakresów dokumentacyjnych <code>192.0.2.0/24</code>, <code>198.51.100.0/24</code>, <code>203.0.113.0/24</code> lub prywatnych.</td></tr>
     <tr><td>Charakter treści</td><td>Obronny i koncepcyjny: rozpoznawanie ataków, konfiguracja zabezpieczeń, etyka i prawo. Bez instrukcji atakowania cudzych systemów.</td></tr>
     <tr><td>Style</td><td>Kolory, odstępy, promienie i czasy animacji tylko z tokenów w <code>css/tokens.css</code>. Kontrast co najmniej WCAG AA w obu motywach.</td></tr>
     <tr><td>Kod</td><td>Bez komentarzy w kodzie. Nazwy mówią, co robią. Bez martwego kodu.</td></tr>
   </table>
 </section>
 
-<section id="module" class="page">
+<section id="module">
   <h2>Moduł gry</h2>
   <div class="endpoint">
     <div class="endpoint__line"><span class="badge badge--post">MODUŁ</span><code>js/games/&lt;id&gt;.js</code></div>
@@ -183,12 +198,12 @@ sw.js ──► offline: najpierw sieć, potem pamięć podręczna</pre>
   </div>
   <h4>Pola obiektu</h4>
   <table>
-    <tr><th>Pole</th><th>Wymagane</th><th>Opis</th></tr>
+    <thead><tr><th>Pole</th><th>Wymagane</th><th>Opis</th></tr></thead>
     <tr><td><code>id</code></td><td>tak</td><td>Identyfikator w adresie <code>#/gra/{id}</code>: małe litery, cyfry i łączniki. Nie zmieniaj go po publikacji, bo od niego zależy zapisany postęp.</td></tr>
     <tr><td><code>title</code></td><td>tak</td><td>Tytuł gry, używany też w <code>&lt;title&gt;</code> strony.</td></tr>
     <tr><td><code>category</code></td><td>tak</td><td>Dział na mapie nauki:
       <table>
-        <tr><th>Wartość</th><th>Znaczenie</th></tr>
+        <thead><tr><th>Wartość</th><th>Znaczenie</th></tr></thead>
         <tr><td><code>linux</code></td><td>Linux i Kali</td></tr>
         <tr><td><code>sieci</code></td><td>Jak działa sieć</td></tr>
         <tr><td><code>hasla</code></td><td>Hasła i kryptografia</td></tr>
@@ -207,17 +222,15 @@ sw.js ──► offline: najpierw sieć, potem pamięć podręczna</pre>
     <tr><td><code>badge()</code></td><td>nie</td><td>Zwraca krótki tekst albo <code>null</code>. Mapa pokazuje go na karcie z kropką uwagi, np. „5 do powtórki”.</td></tr>
   </table>
   <h4>Przykład: najmniejsza gra z quizem</h4>
-<pre>import { runQuiz, draw } from '../ui.js';
+<pre class="flow">import { runQuiz, draw } from '../ui.js';
 
-const POOL = [
-  {
-    prompt: 'Co oznacza otwarty port?',
-    options: [
-      { label: 'Program na nim nasłuchuje', correct: true, why: 'Każdy otwarty port to drzwi do pilnowania.' },
-      { label: 'Kabel jest odłączony', why: 'Port to pojęcie logiczne.' }
-    ]
-  }
-];
+const POOL = [{
+  prompt: 'Co oznacza otwarty port?',
+  options: [
+    { label: 'Program na nim nasłuchuje', correct: true, why: 'Każdy otwarty port to drzwi do pilnowania.' },
+    { label: 'Kabel jest odłączony', why: 'Port to pojęcie logiczne.' }
+  ]
+}];
 
 export default {
   id: 'przyklad',
@@ -237,7 +250,7 @@ export default {
 };</pre>
   <h4>Jak dodać grę</h4>
   <table>
-    <tr><th>Krok</th><th>Co zrobić</th></tr>
+    <thead><tr><th>Krok</th><th>Co zrobić</th></tr></thead>
     <tr><td><code>1</code></td><td>Utwórz <code>js/games/&lt;id&gt;.js</code> według kontraktu powyżej.</td></tr>
     <tr><td><code>2</code></td><td>Dodaj import i wpis w tablicy <code>GAMES</code> w <code>js/games/index.js</code>. Kolejność w tablicy to kolejność na ścieżce nauki.</td></tr>
     <tr><td><code>3</code></td><td>Style dopisz do <code>css/games.css</code>, używając tokenów.</td></tr>
@@ -246,7 +259,7 @@ export default {
   </table>
 </section>
 
-<section id="ctx" class="page">
+<section id="ctx">
   <h2>Obiekt ctx</h2>
   <div class="endpoint">
     <div class="endpoint__line"><span class="badge badge--put">OBIEKT</span><code>ctx</code></div>
@@ -254,11 +267,13 @@ export default {
   </div>
   <h4>Znaczenie kluczy</h4>
   <table>
-    <tr><th>Klucz</th><th>Opis</th></tr>
+    <thead><tr><th>Klucz</th><th>Opis</th></tr></thead>
     <tr><td><code>ctx.level</code></td><td><code>'podstawowy'</code> albo <code>'zaawansowany'</code>. Dla gier bez <code>levels</code> zawsze <code>'podstawowy'</code>.</td></tr>
     <tr><td><code>ctx.signal</code></td><td><code>AbortSignal</code> przerywany przy opuszczeniu gry. Przekazuj go do <code>onKey</code>, żeby skróty klawiszowe nie działały po zmianie widoku.</td></tr>
     <tr><td><code>ctx.stage</code></td><td>Ten sam element, który dostaje <code>mount</code>.</td></tr>
     <tr><td><code>ctx.progress(zrobione, wszystkie)</code></td><td>Aktualizuje pasek postępu i licznik, np. <code>3/12</code>.</td></tr>
+    <tr><td><code>ctx.hideProgress()</code></td><td>Chowa pasek, gdy zdradzałby odpowiedź. Panel audytu pokazuje go dopiero po pierwszym audycie.</td></tr>
+    <tr><td><code>ctx.answer(pytanie, poprawnie)</code></td><td>Zapisuje odpowiedź na liście błędów do powtórki. <code>runQuiz</code> woła go sam po każdej odpowiedzi, więc gra z quizem nie musi nic robić.</td></tr>
     <tr><td><code>ctx.finish({ score, max })</code></td><td>Zapisuje wynik i rysuje ekran wyniku. XP = <code>round(100 × score / max)</code>, zapamiętywany jest najlepszy wynik. Przy okazji: seria dni, wyzwanie dnia, nowe odznaki, lista „Zapamiętaj” i „Kolejny krok w praktyce”.</td></tr>
   </table>
   <h4>Przykład</h4>
@@ -271,7 +286,7 @@ export default {
 }</pre>
 </section>
 
-<section id="ui" class="page">
+<section id="ui">
   <h2>js/ui.js: budowanie widoku</h2>
   <div class="endpoint">
     <div class="endpoint__line"><span class="badge badge--get">FUNKCJA</span><code>h(tag, props, ...children)</code></div>
@@ -279,7 +294,7 @@ export default {
   </div>
   <h4>Klucze props</h4>
   <table>
-    <tr><th>Klucz</th><th>Opis</th></tr>
+    <thead><tr><th>Klucz</th><th>Opis</th></tr></thead>
     <tr><td><code>class</code></td><td>Klasa CSS.</td></tr>
     <tr><td><code>text</code></td><td>Treść tekstowa (bezpieczna dla danych od użytkownika).</td></tr>
     <tr><td><code>html</code></td><td>Treść HTML. Tylko dla statycznych, autorskich tekstów.</td></tr>
@@ -288,7 +303,7 @@ export default {
   </table>
   <h4>Pozostałe funkcje</h4>
   <table>
-    <tr><th>Funkcja</th><th>Opis</th></tr>
+    <thead><tr><th>Funkcja</th><th>Opis</th></tr></thead>
     <tr><td><code>button(options)</code></td><td>Przycisk z ikoną i podpowiedzią skrótu. Opcje: <code>label</code>, <code>variant</code> (<code>primary</code>, <code>secondary</code>, <code>ghost</code>, <code>danger</code>), <code>iconName</code>, <code>iconAfter</code>, <code>shortcut</code>, <code>size</code> oraz dowolne atrybuty.</td></tr>
     <tr><td><code>feedback(kind, title, body)</code></td><td>Komunikat z ikoną. <code>kind</code>: <code>ok</code>, <code>bad</code>, <code>warn</code>, <code>info</code>.</td></tr>
     <tr><td><code>rich(markup, tag)</code></td><td>Element z autorskim HTML.</td></tr>
@@ -301,7 +316,7 @@ export default {
   </table>
 </section>
 
-<section id="quiz" class="page">
+<section id="quiz">
   <h2>choiceQuestion · runQuiz · draw</h2>
   <div class="endpoint">
     <div class="endpoint__line"><span class="badge badge--get">FUNKCJA</span><code>runQuiz(container, ctx, questions, options)</code></div>
@@ -309,7 +324,7 @@ export default {
   </div>
   <h4>Obiekt pytania</h4>
   <table>
-    <tr><th>Klucz</th><th>Wymagany</th><th>Opis</th></tr>
+    <thead><tr><th>Klucz</th><th>Wymagany</th><th>Opis</th></tr></thead>
     <tr><td><code>prompt</code></td><td>tak</td><td>Treść pytania (HTML).</td></tr>
     <tr><td><code>options</code></td><td>tak</td><td>Tablica <code>{ label, correct, why }</code>. Dokładnie jedna odpowiedź ma <code>correct: true</code>. <code>why</code> pojawia się po wybraniu tej odpowiedzi.</td></tr>
     <tr><td><code>explain</code></td><td>nie</td><td>Wyjaśnienie pokazywane zawsze po odpowiedzi.</td></tr>
@@ -319,17 +334,18 @@ export default {
   </table>
   <h4>Opcje runQuiz</h4>
   <table>
-    <tr><th>Opcja</th><th>Opis</th></tr>
+    <thead><tr><th>Opcja</th><th>Opis</th></tr></thead>
     <tr><td><code>label</code> / <code>title</code></td><td>Etykieta licznika, np. „Pytanie 3 z 10”.</td></tr>
     <tr><td><code>offset</code>, <code>total</code></td><td>Gdy quiz jest częścią większej gry: przesunięcie i łączna liczba kroków na pasku postępu.</td></tr>
     <tr><td><code>onAnswer(pytanie, poprawnie)</code></td><td>Wywoływane po każdej odpowiedzi. Egzamin zbiera tak tematy do powtórki.</td></tr>
   </table>
+  <p class="note">Po kliknięciu „Dalej” <code>runQuiz</code> woła <code>ctx.answer</code>, a dopiero potem <code>onAnswer</code>. Zła odpowiedź trafia na listę błędów, dobra ją z niej zdejmuje.</p>
   <h4>draw(pula, ile, poziom)</h4>
   <p>Losuje zestaw z puli. Na poziomie podstawowym bierze tylko elementy bez <code>level</code>. Na zaawansowanym najpierw wszystkie zaawansowane, potem uzupełnia podstawowymi, a całość tasuje.</p>
 <pre>const questions = draw(POOL, 7, ctx.level);</pre>
 </section>
 
-<section id="terminal" class="page">
+<section id="terminal">
   <h2>createTerminal</h2>
   <div class="endpoint">
     <div class="endpoint__line"><span class="badge badge--get">FUNKCJA</span><code>createTerminal(options)</code><span class="lock">js/terminal-engine.js</span></div>
@@ -337,7 +353,7 @@ export default {
   </div>
   <h4>Opcje</h4>
   <table>
-    <tr><th>Opcja</th><th>Wymagana</th><th>Opis</th></tr>
+    <thead><tr><th>Opcja</th><th>Wymagana</th><th>Opis</th></tr></thead>
     <tr><td><code>tree</code></td><td>tak</td><td>Drzewo plików zbudowane z <code>dir({...})</code> i <code>file(treść, tryb, właściciel)</code>. Domyślny tryb to <code>-rw-r--r--</code>, domyślny właściciel to użytkownik.</td></tr>
     <tr><td><code>user</code>, <code>host</code></td><td>tak</td><td>Prompt <code>user@host</code>. Katalog domowy to <code>/home/{user}</code>.</td></tr>
     <tr><td><code>intro</code></td><td>nie</td><td>Linie powitalne: tablica <code>[tekst, klasa]</code>.</td></tr>
@@ -347,7 +363,7 @@ export default {
   </table>
   <h4>Polecenia wbudowane</h4>
   <table>
-    <tr><th>Polecenia</th><th>Opis</th></tr>
+    <thead><tr><th>Polecenia</th><th>Opis</th></tr></thead>
     <tr><td><code>pwd</code> <code>ls</code> <code>cd</code> <code>cat</code></td><td>Poruszanie się i czytanie. <code>ls -a -l</code>, <code>cat ./-nazwa</code>. Uprawnienia odczytu są sprawdzane.</td></tr>
     <tr><td><code>grep</code> <code>find</code> <code>file</code></td><td><code>grep -i -v -c</code>, <code>find KATALOG -name -size -type</code>, rozpoznawanie typu po zawartości.</td></tr>
     <tr><td><code>sort</code> <code>uniq</code> <code>wc</code> <code>head</code> <code>tail</code></td><td><code>sort -r -n</code>, <code>uniq -c -u</code>, <code>wc -l</code>, <code>head/tail -n N</code>. Działają na plikach i w potokach.</td></tr>
@@ -365,7 +381,7 @@ export default {
 stage.append(terminal.element, terminal.quickBar);</pre>
   <h4>Zwracany obiekt</h4>
   <table>
-    <tr><th>Klucz</th><th>Opis</th></tr>
+    <thead><tr><th>Klucz</th><th>Opis</th></tr></thead>
     <tr><td><code>element</code>, <code>quickBar</code></td><td>Okno terminala i pasek szybkiego wstawiania.</td></tr>
     <tr><td><code>print(tekst, klasa)</code></td><td>Wypisuje linie, np. komunikat gry.</td></tr>
     <tr><td><code>getNode(ścieżka)</code>, <code>resolve(ścieżka)</code></td><td>Dostęp do wirtualnego systemu plików.</td></tr>
@@ -373,7 +389,7 @@ stage.append(terminal.element, terminal.quickBar);</pre>
   </table>
 </section>
 
-<section id="audit" class="page">
+<section id="audit">
   <h2>mountConfigAudit</h2>
   <div class="endpoint">
     <div class="endpoint__line"><span class="badge badge--get">FUNKCJA</span><code>mountConfigAudit(stage, ctx, options)</code><span class="lock">js/config-audit.js</span></div>
@@ -381,7 +397,7 @@ stage.append(terminal.element, terminal.quickBar);</pre>
   </div>
   <h4>Opcje</h4>
   <table>
-    <tr><th>Opcja</th><th>Wymagana</th><th>Opis</th></tr>
+    <thead><tr><th>Opcja</th><th>Wymagana</th><th>Opis</th></tr></thead>
     <tr><td><code>settings</code></td><td>tak</td><td>Tablica ustawień, opis poniżej.</td></tr>
     <tr><td><code>title</code>, <code>subtitle</code>, <code>iconName</code></td><td>tak</td><td>Nagłówek panelu.</td></tr>
     <tr><td><code>okMessage</code></td><td>tak</td><td>Komunikat, gdy wszystko jest bezpieczne.</td></tr>
@@ -389,7 +405,7 @@ stage.append(terminal.element, terminal.quickBar);</pre>
   </table>
   <h4>Obiekt ustawienia</h4>
   <table>
-    <tr><th>Klucz</th><th>Opis</th></tr>
+    <thead><tr><th>Klucz</th><th>Opis</th></tr></thead>
     <tr><td><code>id</code>, <code>section</code>, <code>label</code>, <code>caption</code></td><td>Identyfikator, grupa w panelu, nazwa, opis pod nazwą.</td></tr>
     <tr><td><code>options</code></td><td>Tablica <code>{ value, label, mono }</code>, wyświetlana jako przełącznik segmentowy.</td></tr>
     <tr><td><code>initial</code>, <code>best</code>, <code>partial</code></td><td>Wartość startowa, najlepsza i akceptowalna.</td></tr>
@@ -398,14 +414,14 @@ stage.append(terminal.element, terminal.quickBar);</pre>
   <p class="note"><code>settingsToQuestions(settings)</code> zamienia te same ustawienia na pytania egzaminacyjne.</p>
 </section>
 
-<section id="logs" class="page">
+<section id="logs">
   <h2>logViewer</h2>
   <div class="endpoint">
     <div class="endpoint__line"><span class="badge badge--get">FUNKCJA</span><code>logViewer({ title, lines, filters, classify, placeholder })</code><span class="lock">js/log-viewer.js</span></div>
     <p>Przeglądarka logów z filtrem działającym jak <code>grep</code>, podświetlaniem trafień, gotowymi filtrami i przewijaniem dostępnym z klawiatury. Zwraca gotowy panel.</p>
   </div>
   <table>
-    <tr><th>Opcja</th><th>Opis</th></tr>
+    <thead><tr><th>Opcja</th><th>Opis</th></tr></thead>
     <tr><td><code>title</code></td><td>Ścieżka pliku w nagłówku, np. <code>/var/log/auth.log</code>.</td></tr>
     <tr><td><code>lines</code></td><td>Tablica linii logu.</td></tr>
     <tr><td><code>filters</code></td><td>Przyciski z gotowymi filtrami, np. <code>['Failed', 'Accepted']</code>.</td></tr>
@@ -417,56 +433,98 @@ stage.append(terminal.element, terminal.quickBar);</pre>
   <h2>playScenario</h2>
   <div class="endpoint">
     <div class="endpoint__line"><span class="badge badge--get">FUNKCJA</span><code>playScenario(stage, ctx, scenario, index, total, { label, nextLabel })</code><span class="lock">js/scenario.js</span></div>
-    <p>Sytuacja z wyborem reakcji (klawisze A, B, C), punktowana 0, 1 albo 2. Zwraca <code>Promise</code> z punktami. Używają jej gry: socjotechnika, incydent, konto.</p>
+    <p>Sytuacja z wyborem reakcji (klawisze A, B, C), punktowana 0, 1 albo 2. Zwraca <code>Promise</code> z punktami. Używają jej gry: socjotechnika, incydent, konto i ogłoszenia.</p>
   </div>
   <table>
-    <tr><th>Klucz scenariusza</th><th>Opis</th></tr>
+    <thead><tr><th>Klucz scenariusza</th><th>Opis</th></tr></thead>
     <tr><td><code>icon</code>, <code>title</code>, <code>story</code></td><td>Ikona, tytuł i opis sytuacji.</td></tr>
     <tr><td><code>phase</code>, <code>time</code></td><td>Opcjonalnie etap i godzina, np. w reakcji na incydent.</td></tr>
     <tr><td><code>options</code></td><td>Tablica <code>{ label, points, best, why }</code>. Dokładnie jedna ma <code>best: true</code>.</td></tr>
     <tr><td><code>level</code></td><td>Opcjonalnie <code>'zaawansowany'</code>.</td></tr>
+    <tr><td><code>contact</code>, <code>channel</code>, <code>chat</code></td><td>Opcjonalna rozmowa w makiecie telefonu pod opisem: nadawca, kanał (np. „Czat w serwisie Targowisko”) i tablica wiadomości <code>{ me, text }</code>. <code>me: true</code> to wiadomość gracza, po prawej stronie. Tekst trafia do DOM przez <code>textContent</code>, a czytnik ekranu słyszy przed każdą wiadomością, kto ją wysłał.</td></tr>
   </table>
+  <h4>Przykład sytuacji z rozmową</h4>
+<pre class="flow">{
+  icon: 'link',
+  phase: 'Sprzedajesz',
+  title: 'Link do odbioru pieniędzy',
+  story: 'Kupujący przysyła link, pod którym masz „odebrać pieniądze”.',
+  contact: 'Marek_88',
+  channel: 'Czat w serwisie Targowisko',
+  chat: [
+    { text: 'Dzień dobry, kurtka jeszcze aktualna?' },
+    { me: true, text: 'Tak, aktualna.' }
+  ],
+  options: [
+    { label: 'Nie klikam i zgłaszam konto', points: 2, best: true, why: '…' },
+    { label: 'Wpisuję dane karty', points: 0, why: '…' }
+  ]
+}</pre>
+  <p class="note"><code>scenarioQuestion(scenariusz)</code> zamienia sytuację na pytanie egzaminacyjne. Rozmowa nie trafia do pytania, więc <code>story</code> musi być zrozumiałe bez niej.</p>
 </section>
 
-<section id="exam" class="page">
+<section id="exam">
   <h2>examPool i egzamin</h2>
   <div class="endpoint">
     <div class="endpoint__line"><span class="badge badge--patch">EKSPORT</span><code>export function examPool()</code></div>
     <p>Opcjonalny eksport gry. Zwraca samodzielne pytania w formacie <code>runQuiz</code>. Egzamin (<code>js/games/egzamin.js</code>) bierze po jednym pytaniu z każdego tematu, uzupełnia losowo do 25 i pomija pytania zaawansowane.</p>
   </div>
   <table>
-    <tr><th>Zasada</th><th>Opis</th></tr>
+    <thead><tr><th>Zasada</th><th>Opis</th></tr></thead>
     <tr><td>Samodzielność</td><td>Pytanie musi być zrozumiałe bez planszy gry. Pytania odwołujące się do konkretnego logu czy nagrania ruchu nie trafiają do puli.</td></tr>
     <tr><td>Rejestracja</td><td>Nową pulę dopisz do tablicy <code>TOPICS</code> w <code>egzamin.js</code>: <code>[tytuł, id gry, funkcja]</code>.</td></tr>
     <tr><td>Próg</td><td>80%. Po zaliczeniu odznaka „Egzamin zaliczony”. Wynik trafia do zapisu jak każda inna gra.</td></tr>
     <tr><td>Do powtórki</td><td>Tematy z błędnymi odpowiedziami pojawiają się jako linki do gier.</td></tr>
+    <tr><td><code>topicQuestions()</code></td><td>Eksport z <code>egzamin.js</code>: wszystkie pytania ze wszystkich tematów, także zaawansowane, z dopisanym <code>topic</code> i <code>topicId</code>. Korzysta z niego powtórka błędów.</td></tr>
   </table>
 </section>
 
-<section id="storage" class="page">
+<section id="review">
+  <h2>Powtórka błędów</h2>
+  <div class="endpoint">
+    <div class="endpoint__line"><span class="badge badge--patch">GRA</span><code>js/games/powtorka.js</code></div>
+    <p>Gra „Powtórka błędów” wraca do pytań, na które padła zła odpowiedź w quizie albo na egzaminie. Sesja ma 10 pytań: najpierw błędy, a resztę dopełniają losowe pytania z ukończonych gier (na początku nauki z całego kursu). Dobra odpowiedź zdejmuje pytanie z listy, a mapa pokazuje na karcie licznik „N do powtórki”.</p>
+  </div>
+  <h4>Jak działa lista błędów</h4>
+  <table>
+    <thead><tr><th>Krok</th><th>Opis</th></tr></thead>
+    <tr><td><code>1</code></td><td><code>runQuiz</code> woła <code>ctx.answer(pytanie, poprawnie)</code>, a ten <code>noteAnswer(idGry, prompt, poprawnie)</code> z <code>progress.js</code>. Na egzaminie i w powtórce zamiast id gry liczy się <code>topicId</code> pytania.</td></tr>
+    <tr><td><code>2</code></td><td>Klucz to <code>mistakeKey(idGry, prompt)</code>, czyli <code>idGry:skrót</code>. Skrót to FNV-1a z treści pytania zapisany w systemie 36, np. <code>porty:10hop35</code>.</td></tr>
+    <tr><td><code>3</code></td><td>Zła odpowiedź zapisuje klucz z datą, dobra go usuwa. Lista ma limit 300 wpisów, po przekroczeniu odpadają najstarsze.</td></tr>
+    <tr><td><code>4</code></td><td>Powtórka buduje słownik kluczy z <code>topicQuestions()</code> i bierze pytania, których klucze są na liście. Kluczy bez pasującego pytania (np. pytanie zmieniono) po prostu nie pokazuje.</td></tr>
+  </table>
+  <h4>Decyzje</h4>
+  <table>
+    <thead><tr><th>Decyzja</th><th>Powód</th></tr></thead>
+    <tr><td>Zapisywany jest klucz, nie treść</td><td>Pytania zawierają autorski HTML. Gdyby treść trafiała do <code>localStorage</code>, zmanipulowany plik importu mógłby wstrzyknąć kod. Klucz pasuje do wzorca i nie da się go wyświetlić jako HTML.</td></tr>
+    <tr><td>Do powtórki wracają pytania z <code>examPool()</code></td><td>Tylko one są samodzielne i zrozumiałe bez planszy gry. Pytania z mechanik bez <code>runQuiz</code> (skrzynka phishingu, terminal) nie trafiają na listę.</td></tr>
+    <tr><td>Sesja zawsze ma pytania</td><td>Bez błędów powtórka staje się treningiem mieszanym, więc da się ją ukończyć, a ranga „Strażnik sieci” jest osiągalna.</td></tr>
+    <tr><td>Bez wyzwania dnia</td><td>Powtórka, słownik i egzamin są wykluczone z losowania wyzwania dnia w <code>dailyGame()</code>.</td></tr>
+  </table>
+</section>
+
+<section id="storage">
   <h2>Zapis postępu (localStorage)</h2>
   <div class="endpoint">
     <div class="endpoint__line"><span class="badge badge--put">OBIEKT</span><code>localStorage['cyberstart:v1']</code></div>
     <p>Cały stan użytkownika w jednym kluczu. Każdy odczyt i zapis jest w <code>try/catch</code>, więc aplikacja działa także w trybie prywatnym, tylko bez zapamiętywania.</p>
   </div>
   <h4>Przykład (dane demo)</h4>
-<pre>{
+<pre class="flow">{
   "results": {
-    "terminal": { "score": 24, "max": 24, "xp": 100, "date": "2026-10-14T09:12:40.118Z" },
     "porty": { "score": 10, "max": 12, "xp": 83, "date": "2026-10-13T18:02:11.904Z" }
   },
   "theme": "dark",
-  "cards": {
-    "Phishing": { "box": 3, "due": "2026-10-21" }
-  },
+  "cards": { "Phishing": { "box": 3, "due": "2026-10-21" } },
   "streak": { "last": "2026-10-14", "count": 4, "best": 6 },
   "daily": { "id": "backup", "done": true, "date": "2026-10-14" },
   "badges": { "pierwszy-krok": "2026-10-11T19:40:02.511Z" },
-  "difficulty": "podstawowy"
+  "difficulty": "podstawowy",
+  "mistakes": { "porty:10hop35": "2026-10-23T19:06:24.207Z" }
 }</pre>
   <h4>Znaczenie kluczy</h4>
   <table>
-    <tr><th>Klucz</th><th>Opis</th></tr>
+    <thead><tr><th>Klucz</th><th>Opis</th></tr></thead>
     <tr><td><code>results</code></td><td>Najlepszy wynik każdej gry: punkty, maksimum, XP (0 do 100) i data w ISO 8601.</td></tr>
     <tr><td><code>theme</code></td><td><code>null</code> (motyw systemu), <code>"light"</code> albo <code>"dark"</code>.</td></tr>
     <tr><td><code>cards</code></td><td>Fiszki: pudełko 0 do 5 i data następnej powtórki. Odstępy: 0, 1, 3, 7, 14, 30 dni.</td></tr>
@@ -474,11 +532,12 @@ stage.append(terminal.element, terminal.quickBar);</pre>
     <tr><td><code>daily</code></td><td>Wyzwanie dnia. Gra dnia wynika z daty, więc jest taka sama przez cały dzień.</td></tr>
     <tr><td><code>badges</code></td><td>Zdobyte odznaki z datą.</td></tr>
     <tr><td><code>difficulty</code></td><td>Wybrany poziom trudności, wspólny dla wszystkich gier.</td></tr>
+    <tr><td><code>mistakes</code></td><td>Błędy do powtórki: klucz <code>idGry:skrót</code> i data złej odpowiedzi.</td></tr>
   </table>
   <p class="note">Ranga zależy od odsetka ukończonych gier (10, 25, 45, 70 i 100%), więc dodanie nowych gier nie psuje progów.</p>
 </section>
 
-<section id="export" class="page">
+<section id="export">
   <h2>Eksport i import postępu</h2>
   <div class="endpoint">
     <div class="endpoint__line"><span class="badge badge--patch">PLIK</span><code>cyberstart-postep-RRRR-MM-DD.json</code></div>
@@ -493,24 +552,25 @@ stage.append(terminal.element, terminal.quickBar);</pre>
 }</pre>
   <h4>Walidacja przy imporcie</h4>
   <table>
-    <tr><th>Sytuacja</th><th>Wynik</th></tr>
+    <thead><tr><th>Sytuacja</th><th>Wynik</th></tr></thead>
     <tr><td>Plik nie jest JSON-em</td><td>Komunikat „To nie jest poprawny plik JSON.”, stan bez zmian.</td></tr>
     <tr><td>Brak <code>format: "cyberstart-progress"</code></td><td>Komunikat „Ten plik nie pochodzi z eksportu Cyberstart.”, stan bez zmian.</td></tr>
     <tr><td>Plik większy niż 512 kB</td><td>Odrzucony przed odczytem.</td></tr>
     <tr><td>Wynik nieznanej gry albo XP poza 0 do 100</td><td>Wpis pominięty.</td></tr>
     <tr><td>Odznaka o nazwie spoza wzorca <code>[a-z0-9-]</code> albo bez poprawnej daty</td><td>Pominięta (chroni m.in. przed wstrzyknięciem HTML).</td></tr>
     <tr><td>Fiszka z pudełkiem spoza 0 do 5 albo złą datą</td><td>Pominięta.</td></tr>
+    <tr><td>Wpis powtórki z kluczem spoza wzorca <code>idGry:skrót</code> albo bez poprawnej daty</td><td>Pominięty. Wczytywanych jest najwyżej 300 wpisów.</td></tr>
   </table>
 </section>
 
-<section id="badges" class="page">
+<section id="badges">
   <h2>Odznaki i materiały</h2>
   <div class="endpoint">
     <div class="endpoint__line"><span class="badge badge--patch">PLIK</span><code>js/badges.js</code></div>
     <p>Każda odznaka to <code>{ id, title, text, icon, test(context) }</code>. Po każdej grze aplikacja sprawdza wszystkie testy i przyznaje nowe odznaki.</p>
   </div>
   <table>
-    <tr><th>Klucz contextu</th><th>Opis</th></tr>
+    <thead><tr><th>Klucz contextu</th><th>Opis</th></tr></thead>
     <tr><td><code>games</code></td><td>Lista wszystkich gier, np. do sprawdzenia ukończenia działu.</td></tr>
     <tr><td><code>terms</code></td><td>Lista pojęć ze słowniczka.</td></tr>
     <tr><td><code>outcome</code></td><td>Wynik bieżącej gry: <code>xp</code>, <code>level</code>, <code>daily</code>, <code>streak</code>.</td></tr>
@@ -521,10 +581,10 @@ stage.append(terminal.element, terminal.quickBar);</pre>
   </div>
 </section>
 
-<section id="pwa" class="page">
+<section id="pwa">
   <h2>PWA i service worker</h2>
   <table>
-    <tr><th>Element</th><th>Opis</th></tr>
+    <thead><tr><th>Element</th><th>Opis</th></tr></thead>
     <tr><td><code>manifest.webmanifest</code></td><td>Nazwa, kolory, ikony 192 i 512 px (maskowalne) oraz SVG. Pozwala zainstalować aplikację na telefonie.</td></tr>
     <tr><td><code>sw.js</code></td><td>Najpierw sieć z rewalidacją (<code>cache: 'no-cache'</code>), a przy braku sieci pamięć podręczna. Online użytkownik zawsze dostaje aktualne pliki, offline ostatnią wersję.</td></tr>
     <tr><td><code>CACHE</code></td><td>Nazwa pamięci, np. <code>cyberstart-v2</code>. Zmieniaj ją przy każdym wdrożeniu, żeby stare wpisy zostały usunięte.</td></tr>
@@ -539,20 +599,21 @@ stage.append(terminal.element, terminal.quickBar);</pre>
   </p>
 </section>
 
-<section id="tests" class="page">
+<section id="tests">
   <h2>Testy e2e</h2>
   <div class="endpoint">
     <div class="endpoint__line"><span class="badge badge--post">KOMENDA</span><code>npm run test:e2e</code></div>
-    <p>Playwright uruchamia serwer na porcie 4181 i dwa projekty: <code>desktop</code> (1280 px) i <code>mobile</code> (375 px). Pełny przebieg trwa około 40 sekund.</p>
+    <p>Playwright uruchamia serwer na porcie 4181 i dwa projekty: <code>desktop</code> (1280 px) i <code>mobile</code> (375 px). Pełny przebieg, razem z porównaniem zrzutów, trwa około 2 minut.</p>
   </div>
   <table>
-    <tr><th>Plik</th><th>Co sprawdza</th></tr>
+    <thead><tr><th>Plik</th><th>Co sprawdza</th></tr></thead>
     <tr><td><code>games.spec.js</code></td><td>Każda gra da się przejść do ekranu wyniku, na obu poziomach, bez błędów w konsoli.</td></tr>
     <tr><td><code>a11y.spec.js</code></td><td>axe-core (WCAG 2.2 AA) na każdym ekranie, w trakcie gry i na ekranie wyniku, w obu motywach.</td></tr>
     <tr><td><code>mobile.spec.js</code></td><td>Brak poziomego przewijania na wszystkich etapach gier, cele dotyku co najmniej 44 px.</td></tr>
     <tr><td><code>robustness.spec.js</code></td><td>Silnik terminala, obsługa klawiaturą, tryb offline, zmanipulowany import, brak błędów na wszystkich trasach.</td></tr>
     <tr><td><code>exam.spec.js</code></td><td>Zaliczenie egzaminu z odznaką oraz niezaliczony egzamin z listą tematów do powtórki i działającymi linkami.</td></tr>
-    <tr><td><code>mechanics.spec.js</code></td><td>Wyzwanie dnia, seria, odznaki, linki do praktyki, service worker, ponowna gra, zapamiętany poziom.</td></tr>
+    <tr><td><code>mechanics.spec.js</code></td><td>Wyzwanie dnia, seria, odznaki, linki do praktyki, service worker, ponowna gra, zapamiętany poziom, start nowej gry od góry strony, powtórka błędów i walidacja jej importu.</td></tr>
+    <tr><td><code>visual.spec.js</code></td><td>Porównanie zrzutów ekranu z wzorcami, opis poniżej.</td></tr>
     <tr><td><code>app.spec.js</code>, <code>interactions.spec.js</code></td><td>Mapa, tytuły stron, 404, pliki obowiązkowe, motyw, eksport i import, przeciąganie, skróty.</td></tr>
   </table>
   <h4>Autoplayer</h4>
@@ -561,6 +622,25 @@ stage.append(terminal.element, terminal.quickBar);</pre>
     „Dalej” i obsługuje nietypowe mechaniki w funkcji <code>special()</code> (terminal, uprawnienia, dopasowywanie, układanie, CTF).
     Opcja <code>stopAfter</code> zatrzymuje grę w trakcie, a <code>resume</code> kontynuuje, dzięki czemu testy sprawdzają też stany pośrednie.
   </p>
+  <div class="endpoint">
+    <div class="endpoint__line"><span class="badge badge--post">KOMENDA</span><code>npm run test:visual:update</code></div>
+    <p><code>tests/e2e/visual.spec.js</code> robi 76 zrzutów w obu motywach: mapę (cała strona), każdą grę na starcie i po pierwszym ruchu oraz ekran wyniku. Łapie usterki, których nie widzą testy funkcjonalne, np. brak stylów jednego elementu.</p>
+  </div>
+  <table>
+    <thead><tr><th>Zasada</th><th>Opis</th></tr></thead>
+    <tr><td>Powtarzalność</td><td><code>Math.random</code> dostaje stałe ziarno, czas jest zamrożony (<code>page.clock.setFixedTime</code>), ruch ograniczony, a każda trasa jest przeładowywana, żeby losowanie startowało od początku.</td></tr>
+    <tr><td>Zakres zrzutu</td><td>Gry i ekran wyniku obejmują tylko <code>#main</code>. Nagłówek i stopka są na zrzucie mapy. Plik <code>visual.css</code> odpina na czas zrzutu przyklejone paski.</td></tr>
+    <tr><td>Tolerancja</td><td>100 pikseli. Usunięcie jednej reguły CSS zmienia ich kilkaset, więc test to wykrywa, a różnice wygładzania krawędzi (kilka pikseli) nie.</td></tr>
+    <tr><td>Wzorce</td><td>Tylko dla macOS, w <code>tests/e2e/visual.spec.js-snapshots/</code>, poza gitem (około 30 MB). Pierwsze uruchomienie na nowym komputerze tworzy je od zera.</td></tr>
+    <tr><td>Po zmianie wyglądu</td><td>Uruchom <code>npm run test:visual:update</code> i obejrzyj zmienione zrzuty, zanim uznasz je za nowe wzorce.</td></tr>
+  </table>
+  <div class="keep"><h4>Lista kontrolna przed nową wersją</h4></div>
+  <table>
+    <thead><tr><th>Krok</th><th>Co sprawdzić</th></tr></thead>
+    <tr><td><code>1</code></td><td><code>npm run test:e2e</code> przechodzi. Po zamierzonej zmianie wyglądu odśwież wzorce zrzutów.</td></tr>
+    <tr><td><code>2</code></td><td>Nowa nazwa <code>CACHE</code> w <code>sw.js</code>, inaczej aplikacja offline pokaże stare pliki.</td></tr>
+    <tr><td><code>3</code></td><td>Liczba gier w meta <code>index.html</code>, README i <code>img/og.png</code>, wpis w dzienniku <code>CLAUDE.md</code>.</td></tr>
+  </table>
 </section>
 
 </main>

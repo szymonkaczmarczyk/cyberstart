@@ -1,7 +1,7 @@
 import { h, clear, button, rich, scrollBehavior, feedback, plural } from './ui.js';
 import { icon } from './icons.js';
 import { GAMES, CATEGORIES, findGame, nextGame, categoryOf } from './games/index.js';
-import { getResult, recordResult, summary, resetProgress, getTheme, setTheme, exportProgress, importProgress, todayKey, getDifficulty, setDifficulty, getStreak, getDaily, setDaily } from './progress.js';
+import { getResult, recordResult, summary, resetProgress, getTheme, setTheme, exportProgress, importProgress, todayKey, getDifficulty, setDifficulty, getStreak, getDaily, setDaily, noteAnswer } from './progress.js';
 import { evaluateBadges, badgeStatus } from './badges.js';
 import { practiceFor } from './resources.js';
 import { TERM_NAMES } from './games/slownik.js';
@@ -92,7 +92,7 @@ function updateXpChip() {
 }
 
 function dailyGame() {
-  const eligible = GAMES.filter((game) => !['egzamin', 'slownik'].includes(game.id));
+  const eligible = GAMES.filter((game) => !['egzamin', 'slownik', 'powtorka'].includes(game.id));
   const seed = [...todayKey()].reduce((sum, ch) => (sum * 31 + ch.charCodeAt(0)) % 100003, 7);
   return eligible[seed % eligible.length];
 }
@@ -311,6 +311,9 @@ function renderGame(game) {
     },
     hideProgress() {
       progressBox.hidden = true;
+    },
+    answer(question, correct) {
+      noteAnswer(question.topicId ?? game.id, question.prompt, correct);
     },
     finish({ score, max }) {
       ctx.progress(max, max);
